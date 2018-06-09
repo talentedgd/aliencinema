@@ -11,9 +11,12 @@ class Films
         $db = Db::getConnection();
 
         $filmsList = array();
-        $result = $db->query("SELECT id, name, age, rating, is_available FROM film WHERE name LIKE '%" . $search_query . "%'");
+        $sql = 'SELECT id, name, age, rating, is_available FROM film WHERE name LIKE ?';
+        $result = $db->prepare($sql);
+        $result->execute(array("%$search_query%"));
+
         $i = 0;
-        if(!empty($result)) {
+        if (!empty($result)) {
             while ($row = $result->fetch()) {
                 $id = $row['id'];
                 $filmsList[$i]['id'] = $id;
@@ -125,7 +128,9 @@ class Films
     public static function getFilmInfo($id)
     {
         $db = Db::getConnection();
-        $result = $db->query('SELECT * FROM film WHERE id = ' . $id);
+        $result = $db->prepare('SELECT * FROM film WHERE id = :id');
+        $result->bindParam(':id', $id, PDO::PARAM_INT);
+        $result->execute();
 
         $result = $result->fetch();
         $result['image'] = self::getPictureById($id);

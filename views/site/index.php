@@ -9,7 +9,7 @@
             foreach ($films as $film):
                 ?>
                 <div class="carousel-item <?php if ($i == 1) echo 'active'; ?>">
-                    <a href="/films/info/<?php echo $film['id'] ?>"><img class="d-block w-100"
+                    <a href="/films/<?php echo $film['id'] ?>"><img class="d-block w-100"
                                                                          src="<?php echo $film['image'][1]; ?>"></a>
                     <div class="carousel-caption d-none d-md-block">
                         <h5><?php echo $film['name']; ?></h5>
