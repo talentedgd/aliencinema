@@ -82,12 +82,6 @@ nav a div {
 
 /* Проявление краткого описания при наведении */
 
-#future{
-    position: absolute;
-    top: 0px;
-    right: 0px;
-}
-
 #description {
     visibility: hidden;
     position: absolute;

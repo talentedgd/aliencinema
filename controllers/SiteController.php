@@ -2,6 +2,7 @@
 
 class SiteController
 {
+    /* Метод для перехода на страницу "О нас" */
     public function actionAbout()
     {
 

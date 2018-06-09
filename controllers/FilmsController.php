@@ -4,6 +4,7 @@ include_once ROOT . '/models/Films.php';
 
 class FilmsController
 {
+    /* Метод который получает искомые фильмы */
     public function actionSearch()
     {
         $films = array();
@@ -14,6 +15,7 @@ class FilmsController
         require_once(ROOT . '/views/site/films/index.php');
     }
 
+    /* Метод который получает трендовые фильмы для гравной страницы */
     public function actionIndex()
     {
         $films = array();
@@ -22,6 +24,7 @@ class FilmsController
         require_once(ROOT . '/views/site/index.php');
     }
 
+    /* Метод для получения всех фильмов */
     public function actionAll()
     {
         $films = array();
@@ -30,6 +33,7 @@ class FilmsController
         require_once(ROOT . '/views/site/films/index.php');
     }
 
+    /* Метод для получения фильмов, которые есть в наличии */
     public function actionCurrent()
     {
         $films = array();
@@ -37,6 +41,7 @@ class FilmsController
         require_once(ROOT . '/views/site/films/index.php');
     }
 
+    /* Метод для получения фильмов, которых еще нету в наличии*/
     public function actionFuture()
     {
         $films = array();
@@ -44,6 +49,7 @@ class FilmsController
         require_once(ROOT . '/views/site/films/index.php');
     }
 
+    /* Метод для получения информации о фильме */
     public function actionInfo($parameters)
     {
         $filmInfo = Films::getFilmInfo($parameters[0]);

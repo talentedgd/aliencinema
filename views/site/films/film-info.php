@@ -1,4 +1,4 @@
-<?php require_once ROOT . "/views/layouts/header.php";?>
+<?php require_once ROOT . "/views/layouts/header.php"; ?>
 
 <!-- Информация о фильме -->
 
@@ -13,14 +13,17 @@
                     <img class="card-img-top"
                          src="<?php echo $filmInfo['image'][0] ?>"
                          alt="Card image cap"><br><br>
-                    <button style="height: 50px" type="button" class="btn btn-outline-dark btn-block">Забронировать</button>
-                    <button style="height: 50px" type="button" class="btn btn-outline-primary btn-block">Добавить</button>
+                    <button style="height: 50px" type="button" class="btn btn-outline-dark btn-block">Забронировать
+                    </button>
+                    <button style="height: 50px" type="button" class="btn btn-outline-primary btn-block">Добавить
+                    </button>
                 </div>
 
                 <!-- Описание -->
 
                 <div class="col" id="description-name">
-                    <br><h1><?php echo $filmInfo['name']; ?></h1><br>
+                    <br>
+                    <h1><?php echo $filmInfo['name']; ?></h1><br>
                     <div class="row">
                         <div class="col">
                             <p>Возраст:</p>
@@ -112,9 +115,7 @@
                 </div>
                 <div class="row">
                     <div class="col">
-                        <p style="margin-left: 20px; margin-right: 20px; text-indent: 1.5em;">Продолжение истории о ненормальном, невыносимом и неубиваемом Дэдпуле, разрушающем все
-                            стереотипы о супергероях. Бывшего наёмника, превращённого в мутанта-убийцу, ждут новые
-                            «подвиги» — смесь фарса, кровопролития и безумия.</p>
+                        <p style="margin-left: 20px; margin-right: 20px; text-indent: 1.5em;"><?php echo $filmInfo['description']; ?></p>
                     </div>
                 </div>
             </div>
@@ -135,4 +136,4 @@
     </div>
 </div>
 
-<?php require_once ROOT . "/views/layouts/footer.php";?>
+<?php require_once ROOT . "/views/layouts/footer.php"; ?>

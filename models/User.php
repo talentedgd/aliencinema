@@ -2,11 +2,13 @@
 
 class User
 {
+
     public static function register()
     {
 
     }
 
+    /* Метод проверки имени */
     public static function checkName($name)
     {
         if (strlen($name) >= 2) {
@@ -15,6 +17,7 @@ class User
         return false;
     }
 
+    /* Метод проверки пароля */
     public static function checkPassword($password)
     {
         if (strlen($password) >= 6) {
@@ -23,6 +26,7 @@ class User
         return false;
     }
 
+    /* Метод проверки email*/
     public static function checkEmail($email)
     {
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -31,6 +35,7 @@ class User
         return false;
     }
 
+    /* Метод добавления пользователя */
     public static function addUser($email, $name, $password)
     {
         $db = Db::getConnection();

@@ -2,8 +2,10 @@
 
 class Films
 {
+    /* Резервное изображение */
     const DEFAULT_IMAGE = '/template/img/empty_image.jpg';
 
+    /* Метод возвращает искомые фильмы */
     public static function getWantedFilms($search_query)
     {
         $db = Db::getConnection();
@@ -27,6 +29,7 @@ class Films
         return $filmsList;
     }
 
+    /* Метод возвращает трендовые фильмы */
     public static function getTrendFilms()
     {
         $db = Db::getConnection();
@@ -48,6 +51,7 @@ class Films
         return $filmsList;
     }
 
+    /* Метод возвращает все фильмы с коротким описанием */
     public static function getFilmList()
     {
         $db = Db::getConnection();
@@ -72,6 +76,7 @@ class Films
         return $filmsList;
     }
 
+    /* Метод возвращает все текущие фильмы */
     public static function getCurrentList()
     {
         $db = Db::getConnection();
@@ -93,6 +98,7 @@ class Films
         return $filmsList;
     }
 
+    /* Метод возвращает все фильмы, которых еще нету */
     public static function getFutureList()
     {
         $db = Db::getConnection();
@@ -115,6 +121,7 @@ class Films
         return $filmsList;
     }
 
+    /* Метод возвращает полную информацию об одном фильме по id*/
     public static function getFilmInfo($id)
     {
         $db = Db::getConnection();
@@ -126,7 +133,7 @@ class Films
         return $result;
     }
 
-
+    /* Метод возвращает массив изображений для фильма по id*/
     private static function getPictureById($filmId)
     {
         $folder = '/uploads/films/' . $filmId;

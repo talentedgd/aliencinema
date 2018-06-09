@@ -1,5 +1,6 @@
 <?php
 
+/* Получение подключения к БД (PDO) */
 class Db
 {
     public static function getConnection()

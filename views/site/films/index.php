@@ -14,7 +14,6 @@
                             <img class="card-img-top" height="360"
                                  src="<?php echo $filmItem['image'][0]; ?>"
                                  alt="Card image cap">
-                            <img id="future" src="/template/img/soon.png" height="40px" width="40px" alt="">
                             <div class="card-body" id="description">
                                 <h5><?php echo $filmItem['name']; ?></h5>
                                 <h6><?php echo $filmItem['rating']; ?></h6>

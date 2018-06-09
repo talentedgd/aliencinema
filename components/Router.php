@@ -1,16 +1,24 @@
 <?php
+
+/* Класс роутер, который отвечает за маршруты */
 class Router
 {
     private $routes;
+
+    /* Конструктор, для подключения файла с маршрутами и присовения переменной пути к корню проекта */
     public function __construct()
     {
         $routesPath = ROOT . '/config/routes.php';
         $this->routes = include($routesPath);
     }
+
+    /* Метод получения строки запроса */
     private function getUri()
     {
         return trim($_SERVER['REQUEST_URI'], '/');
     }
+
+    /* Метод, который прокладывает маршрут к нужным файлам */
     public function run()
     {
         $uri = $this->getUri();

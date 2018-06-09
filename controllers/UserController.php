@@ -3,6 +3,7 @@ include_once ROOT . '/models/User.php';
 
 class UserController
 {
+    /* Метод регистрации (ассинхронный запрос) */
     public function actionRegisterAjax()
     {
         $name = '';

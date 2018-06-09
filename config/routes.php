@@ -1,5 +1,6 @@
 <?php
 
+/* Маршруты которые обрабатывает Router */
 return array(
     'search' => 'films/search',
     'about' => 'site/about',
