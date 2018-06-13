@@ -3,6 +3,10 @@ body {
     background-size: cover;
 }
 
+#list .form-control{
+    margin-bottom: 10px;
+}
+
 .conclusion {
     display: none;
     font-size: small;

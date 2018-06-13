@@ -13,10 +13,86 @@
                     <img class="card-img-top"
                          src="<?php echo $filmInfo['image'][0] ?>"
                          alt="Card image cap"><br><br>
-                    <button style="height: 50px" type="button" class="btn btn-outline-dark btn-block">Забронировать
+                    <button style="height: 50px" type="button" class="btn btn-outline-dark btn-block"
+                            data-toggle="modal" data-target="#exampleModalCenter2">Забронировать
                     </button>
-                    <button style="height: 50px" type="button" class="btn btn-outline-primary btn-block">Добавить
-                    </button>
+                    <?php if (isset($_SESSION['user_id'])): ?>
+                        <button style="height: 50px" type="button" class="btn btn-outline-primary btn-block">Добавить
+                        </button>
+                    <?php endif; ?>
+                </div>
+
+
+                <!-- Бронирование -->
+                <div class="modal fade bd-example-modal-lg" id="exampleModalCenter2" tabindex="-1" role="dialog"
+                     aria-labelledby="myLargeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalCenterTitle">Modal title</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item">
+                                        <a class="nav-link active" id="today-tab" data-toggle="tab" href="#today"
+                                           role="tab" aria-controls="today" aria-selected="true">Сегодня</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow"
+                                           role="tab" aria-controls="tomorrow" aria-selected="false">Завтра</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="after-tomorrow-tab" data-toggle="tab"
+                                           href="#after-tomorrow" role="tab" aria-controls="after-tomorrow"
+                                           aria-selected="false"><?php echo date("d.m.Y", strtotime("+2 day")); ?></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="day4-tab" data-toggle="tab" href="#day4" role="tab"
+                                           aria-controls="day4"
+                                           aria-selected="false"><?php echo date("d.m.Y", strtotime("+3 day")); ?></a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" id="day5-tab" data-toggle="tab" href="#day5" role="tab"
+                                           aria-controls="day5"
+                                           aria-selected="false"><?php echo date("d.m.Y", strtotime("+4 day")); ?></a>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="today" role="tabpanel"
+                                         aria-labelledby="today-tab">
+                                        <div class="container">
+                                            <div class="row">
+                                                <div class="col">
+                                                    <br>
+                                                    <h1 align="center">ЭКРАН</h1>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="tomorrow" role="tabpanel"
+                                         aria-labelledby="tomorrow-tab">...
+                                    </div>
+                                    <div class="tab-pane fade" id="after-tomorrow" role="tabpanel"
+                                         aria-labelledby="after-tomorrow-tab">...
+                                    </div>
+                                    <div class="tab-pane fade" id="day4" role="tabpanel" aria-labelledby="day4-tab">
+                                        ...
+                                    </div>
+                                    <div class="tab-pane fade" id="day5" role="tabpanel" aria-labelledby="day5-tab">
+                                        ...
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-primary">Save changes</button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Описание -->
@@ -53,7 +129,8 @@
                             <p>Период проката:</p>
                         </div>
                         <div class="col-md-8">
-                            <p><?php echo $filmInfo['rent_start']; ?> - <?php echo $filmInfo['rent_end']; ?></p>
+                            <p>от <?php echo date("d-m-Y", strtotime($filmInfo['rent_start'])); ?>
+                                по <?php echo date("d-m-Y", strtotime($filmInfo['rent_end'])); ?></p>
                         </div>
                     </div>
                     <div class="row">
@@ -77,7 +154,7 @@
                             <p>Жанр:</p>
                         </div>
                         <div class="col-md-8">
-                            <p>Боевик, Комедия, Фантастика, Приключения</p>
+                            <p><?php echo $filmInfo['genres']; ?></p>
                         </div>
                     </div>
                     <div class="row">

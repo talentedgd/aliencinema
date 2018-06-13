@@ -68,47 +68,6 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
         integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
         crossorigin="anonymous"></script>
-
-
-<script>
-    $('button#registration').on('click', function (e) {
-        e.preventDefault();
-
-        $email = $('#email_value').val();
-        $name = $('#name_value').val();
-        $password = $('#password_value').val();
-        $.post('/ajax/registration', {
-            email: $email,
-            name: $name,
-            password: $password,
-        }, onAjaxSuccess);
-
-        function onAjaxSuccess(data) {
-            if (data == "0") {
-                $(".conclusion").hide();
-            }
-            else {
-                var result = JSON.parse(data);
-                for (var i = 0; i < result.length; i++) {
-                    if (result[i] == "email") {
-                        $(".email_conclusion").html("Неправильно введен Email");
-                        $(".email_conclusion").show();
-                    }
-                    if (result[i] == "name") {
-                        $(".name_conclusion").html("Имя не должно быть короче 2 символов");
-                        $(".name_conclusion").show();
-                    }
-                    if (result[i] == "password") {
-                        $(".password_conclusion").html("Пароль не должен быть короче 6-ти символов");
-                        $(".password_conclusion").show();
-                    }
-                }
-            }
-        }
-    });
-    $('#hide').on('click', function () {
-        $(".conclusion").hide();
-    })
-</script>
+<script src="/template/js/main.js"></script>
 </body>
 </html>

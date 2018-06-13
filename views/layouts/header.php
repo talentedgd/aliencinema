@@ -51,7 +51,8 @@
         <!-- Форма поиска -->
 
         <form class="form-inline my-2 my-lg-0" id="search-form" method="post" action="/search">
-            <input class="form-control mr-sm-2" type="search" placeholder="Поиск фильмов..." name="search_query" aria-label="Search">
+            <input class="form-control mr-sm-2" type="search" placeholder="Поиск фильмов..." name="search_query"
+                   aria-label="Search">
             <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Найти</button>
         </form>
 
@@ -60,32 +61,41 @@
         <div class="dropdown navbar-nav">
             <button class="btn dropdown-toggle btn-secondary" type="button" id="dropdownMenuButton"
                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Вход на сайт / Регистрация
+                <?php if (!isset($_SESSION['user_id'])) echo 'Вход на сайт / Регистрация'; else echo User::getUserEmailBySession(); ?>
             </button>
             <div class="dropdown-menu dropdown-menu-right col-lg-12" aria-labelledby="dropdownMenuButton">
-                <form class="p-4">
-                    <div class="form-group">
-                        <label>Запоните форму</label>
-                        <input type="email" name="email" class="form-control" id="exampleDropdownFormEmail2"
-                               placeholder="Email">
-                    </div>
-                    <div class="form-group">
-                        <input type="password" name="password" class="form-control" id="exampleDropdownFormPassword2"
-                               placeholder="Пароль">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Войти</button>
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
-                        Регистрация
-                    </button>
-                </form>
+                <?php if (!isset($_SESSION['user_id'])) { ?>
+                    <form class="p-4">
+                        <div class="form-group">
+                            <label>Запоните форму</label>
+                            <input type="email" class="form-control login_email" id="exampleDropdownFormEmail2"
+                                   placeholder="Email">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" class="form-control login_password" id="exampleDropdownFormPassword2"
+                                   placeholder="Пароль">
+                        </div>
+                        <button type="submit" 0 id="login" name="login" class="btn btn-primary">Войти</button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal"
+                                data-target="#exampleModalCenter">
+                            Регистрация
+                        </button>
+                    </form>
+                <?php } else { ?>
+                    <a class="dropdown-item" href="/profile">Мой профиль</a>
+                    <div class="dropdown-divider"></div>
+                    <a class="dropdown-item" href="" id="logout">Выход</a>
+                <?php } ?>
             </div>
         </div>
+    </div>
     </div>
 </nav>
 
 <!-- Модальное окно для регистрации -->
 
-<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+     aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -97,15 +107,19 @@
             <div class="modal-body">
                 <form>
                     <div class="form-group">
-                        <label for="email_value">Введите Email</label><p class="email_conclusion conclusion">asdfasdf</p>
-                        <input type="email" class="form-control" id="email_value" aria-describedby="emailHelp" placeholder="Email">
+                        <label for="email_value">Введите Email</label>
+                        <p class="email_conclusion conclusion">asdfasdf</p>
+                        <input type="email" class="form-control" id="email_value" aria-describedby="emailHelp"
+                               placeholder="Email">
                     </div>
                     <div class="form-group">
-                        <label for="name_value">Введите свое имя</label><p class="name_conclusion conclusion">asdfasdf</p>
+                        <label for="name_value">Введите свое имя</label>
+                        <p class="name_conclusion conclusion">asdfasdf</p>
                         <input type="text" class="form-control" id="name_value" placeholder="Имя">
                     </div>
                     <div class="form-group">
-                        <label for="password_value">Введите пароль</label><p class="password_conclusion conclusion">asdfasdf</p>
+                        <label for="password_value">Введите пароль</label>
+                        <p class="password_conclusion conclusion">asdfasdf</p>
                         <input type="password" class="form-control" id="password_value" placeholder="Пароль">
                     </div>
                 </form>

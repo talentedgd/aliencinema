@@ -4,6 +4,55 @@ include_once ROOT . '/models/Films.php';
 
 class FilmsController
 {
+    /* Добавить сущность */
+    public function actionAddEssence($target)
+    {
+        if ($target == 'film') {
+            $filmName = $_POST['filmName'];
+            $filmAge = $_POST['filmAge'];
+            $filmOriginalName = $_POST['filmOriginalName'];
+            $formProducer = $_POST['formProducer'];
+            $filmRentStart = $_POST['filmRentStart'];
+            $filmEndStart = $_POST['filmEndStart'];
+            $filmRating = (float)$_POST['filmRating'];
+            $filmLanguage = $_POST['filmLanguage'];
+            $filmProduction = $_POST['filmProduction'];
+            $filmScenario = $_POST['filmScenario'];
+            $filmStarring = $_POST['filmStarring'];
+            $filmDescription = $_POST['filmDescription'];
+            $filmTrailer = $_POST['filmTrailer'];
+            $isAvailable = (int)($_POST['isAvailable'] == 'on') ? 1 : 0;
+            $isImportant = (int)($_POST['isImportant'] == 'on') ? 1 : 0;
+            Films::addFilm($filmName, $filmAge, $filmOriginalName, $formProducer, $filmRentStart, $filmEndStart, $filmRating, $filmLanguage, $filmProduction, $filmScenario, $filmStarring, $filmDescription, $filmTrailer, $isAvailable, $isImportant);
+            echo 'fine';
+        }
+    }
+
+    /* Удаление жанра */
+    public function actionDeleteGenreAjax()
+    {
+        $id = 0;
+        $id = $_POST['id'];
+        Films::deleteGenre($id);
+    }
+
+    /* Удаление сеанса */
+    public function actionDeleteSessionAjax()
+    {
+        $id = 0;
+        $id = $_POST['id'];
+        Films::deleteSession($id);
+    }
+
+    /* Удаление фильма */
+    public function actionDeleteFilmAjax()
+    {
+        $id = 0;
+        $id = $_POST['id'];
+        echo $id;
+        Films::deleteFilm($id);
+    }
+
     /* Метод который получает искомые фильмы */
     public function actionSearch()
     {
@@ -52,7 +101,7 @@ class FilmsController
     /* Метод для получения информации о фильме */
     public function actionInfo($parameters)
     {
-        $filmInfo = Films::getFilmInfo($parameters[0]);
+        $filmInfo = Films::getFilmInfo($parameters);
         require_once(ROOT . '/views/site/films/film-info.php');
     }
 }
