@@ -4,28 +4,76 @@ class Films
 {
     /* Резервное изображение */
     const DEFAULT_IMAGE = '/template/img/empty_image.jpg';
+    const DEFAULT_POSTER = '/template/img/empty_poster.jpg';
 
-    /* Добавление фильма */
-    public static function addFilm($filmName, $filmAge, $filmOriginalName, $formProducer, $filmRentStart, $filmEndStart, $filmRating, $filmLanguage, $filmProduction, $filmScenario, $filmStarring, $filmDescription, $filmTrailer, $isAvailable, $isImportant)
+    public static function orderData($film_id){
+
+    }
+
+    /* Добавление зала */
+    public static function addGenre($genreName)
     {
         $db = Db::getConnection();
-        $result = $db->prepare("INSERT INTO film(name, age, original_name, producer, rent_start, rent_end, rating, language, duration, production, scenario, starring, is_available, trailer, description, is_important) VALUES :filmName, :filmAge, :filmOriginalName, :formProducer, :filmRentStart, :filmEndStart, :filmRating, :filmLanguage, :filmProduction, :filmScenario, :filmStarring, :filmDescription, :filmTrailer, :isAvailable, :isImportant");
+        $result = $db->prepare("SELECT name FROM genre WHERE name = :genreName");
+        $result->bindParam(':genreName', $genreName, PDO::PARAM_STR);
+        $result->execute();
+        if ($row = $result->fetch()) return false;
+        $result = $db->prepare("INSERT INTO genre(name) VALUES (:genreName)");
+        $result->bindParam(':genreName', $genreName, PDO::PARAM_STR);
+        $result->execute();
+        return true;
+    }
+
+    /* Добавление фильма */
+    public static function addFilm($filmName, $filmAge, $filmOriginalName, $filmProducer, $filmRentStart, $filmRentEnd, $filmRating, $filmLanguage, $filmDuration, $filmProduction, $filmScenario, $filmStarring, $filmDescription, $filmTrailer, $isAvailable, $isImportant)
+    {
+        $db = Db::getConnection();
+        $result = $db->prepare("INSERT INTO film(name, age, original_name, producer, rent_start, rent_end, rating, language, duration, production, scenario, starring, is_available, trailer, description, is_important) VALUES (:filmName, :filmAge, :filmOriginalName, :filmProducer, :filmRentStart, :filmRentEnd, :filmRating, :filmLanguage, :filmDuration, :filmProduction, :filmScenario, :filmStarring, :isAvailable, :filmTrailer, :filmDescription, :isImportant)");
         $result->bindParam(':filmName', $filmName, PDO::PARAM_STR);
-        $result->bindParam(':filmAge', $filmAge, PDO::PARAM_STR);
+        $result->bindParam(':filmAge', $filmAge, PDO::PARAM_INT);
         $result->bindParam(':filmOriginalName', $filmOriginalName, PDO::PARAM_STR);
-        $result->bindParam(':formProducer', $formProducer, PDO::PARAM_STR);
+        $result->bindParam(':filmProducer', $filmProducer, PDO::PARAM_STR);
         $result->bindParam(':filmRentStart', $filmRentStart, PDO::PARAM_STR);
-        $result->bindParam(':filmEndStart', $filmEndStart, PDO::PARAM_STR);
+        $result->bindParam(':filmRentEnd', $filmRentEnd, PDO::PARAM_STR);
         $result->bindParam(':filmRating', $filmRating, PDO::PARAM_STR);
         $result->bindParam(':filmLanguage', $filmLanguage, PDO::PARAM_STR);
+        $result->bindParam(':filmDuration', $filmDuration, PDO::PARAM_STR);
         $result->bindParam(':filmProduction', $filmProduction, PDO::PARAM_STR);
         $result->bindParam(':filmScenario', $filmScenario, PDO::PARAM_STR);
         $result->bindParam(':filmStarring', $filmStarring, PDO::PARAM_STR);
-        $result->bindParam(':filmDescription', $filmDescription, PDO::PARAM_STR);
+        $result->bindParam(':isAvailable', $isAvailable, PDO::PARAM_INT);
         $result->bindParam(':filmTrailer', $filmTrailer, PDO::PARAM_STR);
-        $result->bindParam(':isAvailable', $isAvailable, PDO::PARAM_STR);
-        $result->bindParam(':isImportant', $isImportant, PDO::PARAM_STR);
-        $result->execute();
+        $result->bindParam(':filmDescription', $filmDescription, PDO::PARAM_STR);
+        $result->bindParam(':isImportant', $isImportant, PDO::PARAM_INT);
+        if ($result->execute()) return true;
+        return false;
+    }
+
+    /* Добавление сеанса */
+    public static function addSession($filmId, $hallId, $sessionDate, $sessionTime, $sessionPrice)
+    {
+        $db = Db::getConnection();
+        $result = $db->prepare("INSERT INTO session(film_id, hall_id, date, time, price) VALUES ($filmId, $hallId, '$sessionDate', '$sessionTime', :sessionPrice)");
+        $result->bindParam(':sessionPrice', $sessionPrice, PDO::PARAM_STR);
+        if ($result->execute()) return true;
+        return false;
+    }
+
+    /* Получить список залов */
+    public static function getHallList()
+    {
+        $db = Db::getConnection();
+        $result = $db->query('SELECT * FROM hall');
+        $hallList = array();
+        $i = 0;
+        while ($row = $result->fetch()) {
+            $hallList[$i]['id'] = $row['id'];
+            $hallList[$i]['name'] = $row['name'];
+            $hallList[$i]['number_of_sits'] = $row['number_of_sits'];
+            $hallList[$i]['number_of_rows'] = $row['number_of_rows'];
+            $i++;
+        }
+        return $hallList;
     }
 
     public static function deleteGenre($id)
@@ -299,7 +347,9 @@ class Films
                 return $files;
             }
         }
+        $files[0] = [self::DEFAULT_IMAGE];
+        $files[1] = [self::DEFAULT_POSTER];
 
-        return [self::DEFAULT_IMAGE];
+        return $files;
     }
 }

@@ -105,6 +105,10 @@ $('#submit-essence').on('click', function (e) {
     $target = $('#select-essence :selected').val();
     if ($target == '2') {
         $('#add-film').modal('show');
+    } else if ($target == '1') {
+        $('#add-session').modal('show');
+    } else {
+        $('#add-genre').modal('show');
     }
 });
 
@@ -114,11 +118,12 @@ $('#submit-film').on('click', function (e) {
     $filmName = $('#film-name').val();
     $filmAge = $('#film-age').val();
     $filmOriginalName = $('#film-original-name').val();
-    $formProducer = $('#form-producer').val();
+    $filmProducer = $('#film-producer').val();
     $filmRentStart = $('#film-rent-start').val();
-    $filmEndStart = $('#film-end-start').val();
+    $filmRentEnd = $('#film-rent-end').val();
     $filmRating = $('#film-rating').val();
     $filmLanguage = $('#film-language').val();
+    $filmDuration = $('#film-duration').val();
     $filmProduction = $('#film-production').val();
     $filmScenario = $('#film-scenario').val();
     $filmStarring = $('#film-starring').val();
@@ -130,11 +135,12 @@ $('#submit-film').on('click', function (e) {
         filmName: $filmName,
         filmAge: $filmAge,
         filmOriginalName: $filmOriginalName,
-        formProducer: $formProducer,
+        filmProducer: $filmProducer,
         filmRentStart: $filmRentStart,
-        filmEndStart: $filmEndStart,
+        filmRentEnd: $filmRentEnd,
         filmRating: $filmRating,
         filmLanguage: $filmLanguage,
+        filmDuration: $filmDuration,
         filmProduction: $filmProduction,
         filmScenario: $filmScenario,
         filmStarring: $filmStarring,
@@ -147,5 +153,68 @@ $('#submit-film').on('click', function (e) {
     function onAjaxSuccess(data) {
         alert(data);
     }
+});
 
-})
+/* Добавление сеанса */
+$('#submit-session').on('click', function (e) {
+    e.preventDefault();
+    $filmId = $('#session-film-name :selected').attr('id');
+    $hallId = $('#session-hall-name :selected').attr('id');
+    $sessionDate = $('#session-date').val();
+    $sessionTime = $('#session-time').val();
+    $sessionPrice = $('#session-price').val();
+
+    $.post('ajax/add/essence/session', {
+        filmId: $filmId,
+        hallId: $hallId,
+        sessionDate: $sessionDate,
+        sessionTime: $sessionTime,
+        sessionPrice: $sessionPrice,
+    }, onAjaxSuccess);
+
+    function onAjaxSuccess(data) {
+        alert(data);
+    }
+});
+
+/* Добавление жанра */
+$('#submit-genre').on('click', function (e) {
+    e.preventDefault();
+    $genreName = $('#genre-name').val();
+
+    $.post('ajax/add/essence/genre', {
+        genreName: $genreName,
+    }, onAjaxSuccess);
+
+    function onAjaxSuccess(data) {
+        alert(data);
+    }
+});
+
+/* Добавление фильма в список желаемого */
+$('.add-to-wish-list').on('click', function (e) {
+    e.preventDefault()
+    $id = $(this).attr('id');
+    $.post('/ajax/addToWishList', {
+        id: $id,
+    }, onAjaxSuccess);
+
+    function onAjaxSuccess(data) {
+        alert(data);
+        window.location.reload();
+    }
+});
+
+/* Удаление фильма из списка желаемого */
+$('.delete-to-wish-list').on('click', function (e) {
+    e.preventDefault()
+    $id = $(this).attr('id');
+    $.post('/ajax/deleteToWishList', {
+        id: $id,
+    }, onAjaxSuccess);
+
+    function onAjaxSuccess(data) {
+        alert(data);
+        window.location.reload();
+    }
+});

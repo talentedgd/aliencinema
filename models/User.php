@@ -2,6 +2,41 @@
 
 class User
 {
+
+    /* Проверить есть в списке желаемого даг=наго юзера фильм */
+    public static function checkWishList($film_id)
+    {
+        $db = Db::getConnection();
+        $id = $_SESSION['user_id'];
+        $result = $db->query("SELECT film_id FROM wish_list WHERE registered_user_id = $id");
+        $i = 0;
+        while ($row = $result->fetch()) {
+            if ($row['film_id'] == $film_id) {
+                return true;
+            }
+            $i++;
+        }
+        return false;
+    }
+
+    /* Удалить фильм из списка желаемого*/
+    public static function deleteWishList($id)
+    {
+        $user_id = $_SESSION['user_id'];
+        $db = Db::getConnection();
+        if ($db->query("DELETE FROM wish_list WHERE registered_user_id = $user_id AND film_id = $id")) return true;
+        return false;
+    }
+
+    /* Добавить в список желаемого фильм */
+    public static function addWishList($id)
+    {
+        $user_id = $_SESSION['user_id'];
+        $db = Db::getConnection();
+        if ($db->query("INSERT INTO wish_list(registered_user_id, film_id) VALUES ($user_id, $id)")) return true;
+        return false;
+    }
+
     /* Изменение парояля */
     public static function changePassword($oldPassword, $newPassword, $repPassword)
     {
@@ -16,6 +51,7 @@ class User
         return false;
     }
 
+    /* Полчемение списка желаемых фильмов */
     public static function getWishList()
     {
         $db = Db::getConnection();
@@ -38,8 +74,7 @@ class User
     }
 
     /* Проверяет админ ли пользователь */
-    public
-    static function userIsAdmin()
+    public static function userIsAdmin()
     {
         $db = Db::getConnection();
         $result = $db->query('SELECT is_admin FROM registered_user WHERE id=' . $_SESSION['user_id']);
@@ -114,7 +149,7 @@ class User
             $result->bindParam(':email', $email, PDO::PARAM_STR);
             $result->execute();
             if ($result->fetch()) {
-                $result = $db->prepare('SELECT id FROM registered_user WHERE id IN (SELECT id FROM user WHERE email = :email)');
+                $result = $db->prepare('SELECT id FROM registered_user, user WHERE registered_user.id = user.id AND user.email = :email');
                 $result->bindParam(':email', $email, PDO::PARAM_STR);
                 $result->execute();
                 if ($result->fetch()) {

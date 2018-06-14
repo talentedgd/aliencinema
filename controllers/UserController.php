@@ -3,6 +3,24 @@ require_once ROOT . '/models/Films.php';
 
 class UserController
 {
+    /* Удалить из списка желаемого */
+    public function actionDeleteFilmToWishList()
+    {
+        $id = '';
+        $id = (int)$_POST['id'];
+        if (User::deleteWishList($id)) echo 'Фильм успешно удален!';
+        else echo 'Фильм не был удален!';
+    }
+
+    /* Добавить фильм в список желаемого */
+    public function actionAddFilmToWishList()
+    {
+        $id = '';
+        $id = (int)$_POST['id'];
+        if (User::addWishList($id)) echo 'Фильм успешно добавлен!';
+        else echo 'Фильм не добавлен!';
+    }
+
     /* Метд для изменения пароля */
     public function actionChangePassword()
     {
@@ -25,6 +43,7 @@ class UserController
             $filmList = Films::getFilmList();
             $sessionList = Films::getSessionList();
             $genreList = Films::getGenreList();
+            $hallList = Films::getHallList();
 
             if (!User::userIsAdmin()) {
                 $wishList = User::getWishList();

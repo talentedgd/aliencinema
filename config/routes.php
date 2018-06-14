@@ -2,6 +2,12 @@
 
 /* Маршруты которые обрабатывает Router */
 return array(
+    /* Удалить фильм из списка желаемого */
+    'ajax/deleteToWishList'=>'user/deleteFilmToWishList',
+
+    /* Добавить в список желаемого фильм */
+    'ajax/addToWishList'=>'user/addFilmToWishList',
+
     /* Смена пароля */
     'ajax/change/password' => 'user/changePassword',
 

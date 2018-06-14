@@ -19,9 +19,23 @@
                                 <h6><?php echo $filmItem['rating']; ?></h6>
                                 <h6>Жанр: ужасы</h6>
                                 <h6>Возраст: +<?php echo $filmItem['age']; ?></h6>
-                                <button type="button" class="btn btn-outline-secondary btn-block">Забронировать
-                                </button>
-                                <button type="button" class="btn btn-outline-primary btn-block">Добавить</button>
+                                <?php if (!isset($_SESSION['user_id']) || (isset($_SESSION['user_id']) && (!User::userIsAdmin()))): ?>
+
+                                    <button style="height: 50px" type="button" class="btn btn-outline-dark btn-block"
+                                            data-toggle="modal" data-target="#exampleModalCenter2">Забронировать
+                                    </button>
+                                    <?php if (isset($_SESSION['user_id'])): ?>
+                                        <?php if (User::checkWishList($filmItem['id'])) { ?>
+                                            <button id="<?php echo $filmItem['id']; ?>" style="height: 50px" type="button"
+                                                    class="delete-to-wish-list btn btn-outline-danger btn-block">
+                                                Удалить
+                                            </button>
+                                        <?php } else { ?>
+                                            <button id="<?php echo $filmItem['id']; ?>" style="height: 50px" type="button"
+                                                    class="add-to-wish-list btn btn-outline-primary btn-block">
+                                                Добавить
+                                            </button>
+                                        <?php } endif; endif; ?>
                             </div>
                         </div>
                     </a>

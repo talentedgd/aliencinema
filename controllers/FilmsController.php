@@ -8,23 +8,40 @@ class FilmsController
     public function actionAddEssence($target)
     {
         if ($target == 'film') {
-            $filmName = $_POST['filmName'];
-            $filmAge = $_POST['filmAge'];
-            $filmOriginalName = $_POST['filmOriginalName'];
-            $formProducer = $_POST['formProducer'];
-            $filmRentStart = $_POST['filmRentStart'];
-            $filmEndStart = $_POST['filmEndStart'];
-            $filmRating = (float)$_POST['filmRating'];
-            $filmLanguage = $_POST['filmLanguage'];
-            $filmProduction = $_POST['filmProduction'];
-            $filmScenario = $_POST['filmScenario'];
-            $filmStarring = $_POST['filmStarring'];
-            $filmDescription = $_POST['filmDescription'];
-            $filmTrailer = $_POST['filmTrailer'];
-            $isAvailable = (int)($_POST['isAvailable'] == 'on') ? 1 : 0;
-            $isImportant = (int)($_POST['isImportant'] == 'on') ? 1 : 0;
-            Films::addFilm($filmName, $filmAge, $filmOriginalName, $formProducer, $filmRentStart, $filmEndStart, $filmRating, $filmLanguage, $filmProduction, $filmScenario, $filmStarring, $filmDescription, $filmTrailer, $isAvailable, $isImportant);
-            echo 'fine';
+            $filmName = strip_tags(trim($_POST['filmName']));
+            $filmAge = strip_tags(trim($_POST['filmAge']));
+            $filmOriginalName = strip_tags(trim($_POST['filmOriginalName']));
+            $filmProducer = strip_tags(trim($_POST['filmProducer']));
+            $filmRentStart = strip_tags(trim($_POST['filmRentStart']));
+            $filmRentEnd = strip_tags(trim($_POST['filmRentEnd']));
+            $filmRating = (float)strip_tags(trim($_POST['filmRating']));
+            $filmLanguage = strip_tags(trim($_POST['filmLanguage']));
+            $filmDuration = strip_tags(trim($_POST['filmDuration']));
+            $filmProduction = strip_tags(trim($_POST['filmProduction']));
+            $filmScenario = strip_tags(trim($_POST['filmScenario']));
+            $filmStarring = strip_tags(trim($_POST['filmStarring']));
+            $isAvailable = (int)(strip_tags(trim($_POST['isAvailable'] == 'on') ? 1 : 0));
+            $filmTrailer = strip_tags(trim($_POST['filmTrailer']));
+            $filmDescription = strip_tags(trim($_POST['filmDescription']));
+            $isImportant = (int)(strip_tags(trim($_POST['isImportant'] == 'on') ? 1 : 0));
+            if (Films::addFilm($filmName, $filmAge, $filmOriginalName, $filmProducer, $filmRentStart, $filmRentEnd, $filmRating, $filmLanguage, $filmDuration, $filmProduction, $filmScenario, $filmStarring, $filmDescription, $filmTrailer, $isAvailable, $isImportant))
+                echo 'Фильм успешно добавлен!';
+            else echo 'Данные введены не корректно!';
+        }
+        if ($target == 'session') {
+            $filmId = (int)strip_tags(trim($_POST['filmId']));
+            $hallId = (int)strip_tags(trim($_POST['hallId']));
+            $sessionDate = strip_tags(trim($_POST['sessionDate']));
+            $sessionTime = strip_tags(trim($_POST['sessionTime']));
+            $sessionPrice = (float)strip_tags(trim($_POST['sessionPrice']));
+            if (Films::addSession($filmId, $hallId, $sessionDate, $sessionTime, $sessionPrice))
+                echo 'Сеанс успешно добавлен!';
+            else echo 'Данные введены не корректно!';
+        } else {
+            $genreName = strip_tags(trim($_POST['genreName']));
+            if (Films::addGenre($genreName))
+                echo 'Жанр успешно добавлен!';
+            else echo 'Такой жанр уже существует!';
         }
     }
 
@@ -103,5 +120,8 @@ class FilmsController
     {
         $filmInfo = Films::getFilmInfo($parameters);
         require_once(ROOT . '/views/site/films/film-info.php');
+        if (!User::userIsAdmin()) {
+            $order = Films::orderData($filmInfo['id']);
+        }
     }
 }
