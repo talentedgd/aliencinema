@@ -348,7 +348,7 @@
                                 <td><?php echo $sessionItem['hall_name']; ?></td>
                                 <td><?php echo $sessionItem['date']; ?></td>
                                 <td><?php echo $sessionItem['time']; ?></td>
-                                <td><?php echo $sessionItem['price']; ?></td>
+                                <td><?php echo $sessionItem['price']; ?> грн</td>
                                 <td>
                                     <button value="session" type="button" id="<?php echo $sessionItem['id']; ?>"
                                             class="order-admin-decision btn btn-outline-danger delete">Удалить

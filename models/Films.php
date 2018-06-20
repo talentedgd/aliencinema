@@ -6,11 +6,25 @@ class Films
     const DEFAULT_IMAGE = '/template/img/empty_image.jpg';
     const DEFAULT_POSTER = '/template/img/empty_poster.jpg';
 
-    public static function orderData($film_id){
 
+    /* Список сегодняшних сеансов */
+    public static function getOrderDataToday($film_id)
+    {
+        $db = Db::getConnection();
+        $date = date('Y-m-d');
+        $result = $db->query("SELECT id, time, hall_id FROM session WHERE date='$date' AND film_id = $film_id");
+        $todaySessionList = array();
+        $i = 0;
+        while ($row = $result->fetch()) {
+            $todaySessionList[$i]['id'] = $row['id'];
+            $todaySessionList[$i]['time'] = $row['time'];
+            $todaySessionList[$i]['hall_id'] = $row['hall_id'];
+            $i++;
+        }
+        return $todaySessionList;
     }
 
-    /* Добавление зала */
+    /* Добавление жанра */
     public static function addGenre($genreName)
     {
         $db = Db::getConnection();
@@ -53,6 +67,35 @@ class Films
     public static function addSession($filmId, $hallId, $sessionDate, $sessionTime, $sessionPrice)
     {
         $db = Db::getConnection();
+
+        /* Проверяет заполнено ли поле с ценой */
+        if (!$sessionPrice) return false;
+
+        /* Проверка не выходит ли сеанс из диапазона времени работы кинотеатра */
+        if (strtotime($sessionTime) < strtotime("8:00") || strtotime($sessionTime) > strtotime("23:00")) {
+            return false;
+        }
+
+        /* Проверка на то, не находится ли дата добавляемого сеанса в прошлом */
+        $tomorrowDate = date("d.m.Y", strtotime("+1 day"));
+        $dateResult = strtotime($sessionDate) < strtotime($tomorrowDate);
+        if ($dateResult) {
+            return false;
+        }
+
+        /* Получить длительность фильма и перевести в секунды */
+        $timeResult = $db->query("SELECT duration FROM film WHERE id = $filmId");
+        $timeResult = $timeResult->fetch();
+        $filmDuration = strtotime($timeResult['duration']) - strtotime("00:00:00") + 1800;
+
+        /* Проверка на существование сеанса и доступность выбраного времени для заданного зала */
+        $checkSession = $db->query("SELECT time FROM session WHERE film_id = $filmId AND hall_id = $hallId AND date = '$sessionDate'");
+        while ($row = $checkSession->fetch()) {
+            $time = strtotime($row['time']);
+            if (($time - $filmDuration) < strtotime($sessionTime) && ($time + $filmDuration) > strtotime($sessionTime)) return false;
+        }
+
+        /* Добавление фильма */
         $result = $db->prepare("INSERT INTO session(film_id, hall_id, date, time, price) VALUES ($filmId, $hallId, '$sessionDate', '$sessionTime', :sessionPrice)");
         $result->bindParam(':sessionPrice', $sessionPrice, PDO::PARAM_STR);
         if ($result->execute()) return true;
@@ -76,18 +119,21 @@ class Films
         return $hallList;
     }
 
+    /* Удаление жанра*/
     public static function deleteGenre($id)
     {
         $db = Db::getConnection();
         $db->query("DELETE FROM genre WHERE id = $id");
     }
 
+    /* Удаление сеанса */
     public static function deleteSession($id)
     {
         $db = Db::getConnection();
         $db->query("DELETE FROM session WHERE id = $id");
     }
 
+    /* Удаление фильма */
     public static function deleteFilm($id)
     {
         $db = Db::getConnection();
@@ -138,11 +184,10 @@ class Films
         $sessionList = array();
         $result = $db->query('SELECT session.id, film.name, hall.name, session.date,session.time, session.price FROM session, film, hall WHERE film.id=session.film_id AND hall.id=session.hall_id');
         $i = 0;
-
         if (!empty($result)) {
             while ($row = $result->fetch()) {
                 $sessionList[$i]['id'] = $row['id'];
-                $sessionList[$i]['film_name'] = $row['name'];
+                $sessionList[$i]['film_name'] = $row[1];
                 $sessionList[$i]['hall_name'] = $row['name'];
                 $sessionList[$i]['date'] = $row['date'];
                 $sessionList[$i]['time'] = $row['time'];
@@ -154,7 +199,7 @@ class Films
         return false;
     }
 
-    /* Получить список заказов */
+    /* Получить список заказов для администратора */
     public static function getOrderList()
     {
         $db = Db::getConnection();
@@ -296,7 +341,7 @@ class Films
         return $filmsList;
     }
 
-    /* Метод возвращает полную информацию об одном фильме по id*/
+    /* Метод возвращает полную информацию об одном фильме по id */
     public static function getFilmInfo($id)
     {
         $db = Db::getConnection();
@@ -307,7 +352,7 @@ class Films
 
         $result['image'] = self::getPictureById($id);
 
-        $genreResult = $db->prepare('SELECT name FROM genre WHERE id IN (SELECT genre_id FROM film_genre WHERE film_id = :id)');
+        $genreResult = $db->prepare('SELECT genre.name FROM genre, film_genre, film WHERE genre.id = film_genre.genre_id AND film_genre.film_id = film.id');
         $genreResult->bindParam(':id', $id, PDO::PARAM_INT);
         $genreResult->execute();
         $genreList = "";

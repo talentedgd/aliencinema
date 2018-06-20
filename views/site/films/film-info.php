@@ -1,5 +1,110 @@
 <?php require_once ROOT . "/views/layouts/header.php"; ?>
 
+<!-- Бронирование -->
+<div class="modal fade bd-example-modal-lg" id="booking" tabindex="-1" role="dialog"
+     aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenterTitle">Бронирование билетов</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="today-tab" data-toggle="tab"
+                           href="#today"
+                           role="tab" aria-controls="today" aria-selected="true">Сегодня</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow"
+                           role="tab" aria-controls="tomorrow" aria-selected="false">Завтра</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="after-tomorrow-tab" data-toggle="tab"
+                           href="#after-tomorrow" role="tab" aria-controls="after-tomorrow"
+                           aria-selected="false"><?php echo date("d.m.Y", strtotime("+2 day")); ?></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="day4-tab" data-toggle="tab" href="#day4"
+                           role="tab"
+                           aria-controls="day4"
+                           aria-selected="false"><?php echo date("d.m.Y", strtotime("+3 day")); ?></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="day5-tab" data-toggle="tab" href="#day5"
+                           role="tab"
+                           aria-controls="day5"
+                           aria-selected="false"><?php echo date("d.m.Y", strtotime("+4 day")); ?></a>
+                    </li>
+                </ul>
+                <div class="tab-content" id="myTabContent">
+
+                    <!-- Рассписание на сегодня -->
+                    <form action="/ajax/makeOrder" method="post">
+                        <div class="tab-pane fade show active" id="today" role="tabpanel"
+                             aria-labelledby="today-tab">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col"><br>
+                                        <!-- Сеансы -->
+                                        <select class="custom-select" name="session">
+                                            <?php $i = 0;
+                                            foreach ($todaySessionList as $item): ?>
+                                                <option value="<?php echo $item['id']; ?>" <?php echo ($i > 0) ? '' : 'selected'; ?>>
+                                                    <?php echo $item['time']; ?>
+                                                </option>
+                                                <?php $i++; endforeach; ?>
+                                        </select><br><br>
+
+                                        <!-- Залы -->
+                                        <select class="custom-select" name="hall">
+                                            <?php $i = 0;
+                                            foreach ($todaySessionList as $item): ?>
+                                                <option value="<?php echo $item['hall_id']; ?>" <?php echo ($i > 0) ? '' : 'selected'; ?>>
+                                                    Зал <?php echo $item['hall_id']; ?>
+                                                </option>
+                                                <?php $i++; endforeach; ?>
+                                        </select><br><br>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                        </div>
+                        <button id="submit-order" type="submit" class="btn btn-primary">Готово</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                        </button>
+                    </form>
+
+                    <!-- Рассписание на завтра -->
+                    <div class="tab-pane fade" id="tomorrow" role="tabpanel"
+                         aria-labelledby="tomorrow-tab">...
+                    </div>
+
+                    <!-- Рассписание на после завтра -->
+                    <div class="tab-pane fade" id="after-tomorrow" role="tabpanel"
+                         aria-labelledby="after-tomorrow-tab">...
+                    </div>
+
+                    <!-- Рассписание на после-после завтра =) -->
+                    <div class="tab-pane fade" id="day4" role="tabpanel"
+                         aria-labelledby="day4-tab">
+                        ...
+                    </div>
+
+                    <!-- Рассписание на после-после-после завтра -->
+                    <div class="tab-pane fade" id="day5" role="tabpanel"
+                         aria-labelledby="day5-tab">
+                        ...
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Информация о фильме -->
 
 <div class="container card" id="view">
@@ -15,96 +120,8 @@
                          alt="Card image cap"><br><br>
                     <?php if (!isset($_SESSION['user_id']) || (isset($_SESSION['user_id']) && (!User::userIsAdmin()))): ?>
 
-                        <!-- Бронирование -->
-                        <div class="modal fade bd-example-modal-lg" id="exampleModalCenter2" tabindex="-1" role="dialog"
-                             aria-labelledby="myLargeModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="exampleModalCenterTitle">Бронирование билетов</h5>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                            <span aria-hidden="true">&times;</span>
-                                        </button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <ul class="nav nav-tabs" id="myTab" role="tablist">
-                                            <li class="nav-item">
-                                                <a class="nav-link active" id="today-tab" data-toggle="tab"
-                                                   href="#today"
-                                                   role="tab" aria-controls="today" aria-selected="true">Сегодня</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="tomorrow-tab" data-toggle="tab" href="#tomorrow"
-                                                   role="tab" aria-controls="tomorrow" aria-selected="false">Завтра</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="after-tomorrow-tab" data-toggle="tab"
-                                                   href="#after-tomorrow" role="tab" aria-controls="after-tomorrow"
-                                                   aria-selected="false"><?php echo date("d.m.Y", strtotime("+2 day")); ?></a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="day4-tab" data-toggle="tab" href="#day4"
-                                                   role="tab"
-                                                   aria-controls="day4"
-                                                   aria-selected="false"><?php echo date("d.m.Y", strtotime("+3 day")); ?></a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="day5-tab" data-toggle="tab" href="#day5"
-                                                   role="tab"
-                                                   aria-controls="day5"
-                                                   aria-selected="false"><?php echo date("d.m.Y", strtotime("+4 day")); ?></a>
-                                            </li>
-                                        </ul>
-                                        <div class="tab-content" id="myTabContent">
-
-                                            <!-- Рассписание на сегодня -->
-                                            <div class="tab-pane fade show active" id="today" role="tabpanel"
-                                                 aria-labelledby="today-tab">
-                                                <div class="container">
-                                                    <div class="row">
-                                                        <div class="col">
-                                                            <br>
-                                                            <h1 align="center">ЭКРАН</h1>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                            <!-- Рассписание на завтра -->
-                                            <div class="tab-pane fade" id="tomorrow" role="tabpanel"
-                                                 aria-labelledby="tomorrow-tab">...
-                                            </div>
-
-                                            <!-- Рассписание на после завтра -->
-                                            <div class="tab-pane fade" id="after-tomorrow" role="tabpanel"
-                                                 aria-labelledby="after-tomorrow-tab">...
-                                            </div>
-
-                                            <!-- Рассписание на после-после завтра =) -->
-                                            <div class="tab-pane fade" id="day4" role="tabpanel"
-                                                 aria-labelledby="day4-tab">
-                                                ...
-                                            </div>
-
-                                            <!-- Рассписание на после-после-после завтра -->
-                                            <div class="tab-pane fade" id="day5" role="tabpanel"
-                                                 aria-labelledby="day5-tab">
-                                                ...
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close
-                                        </button>
-                                        <button type="button" class="btn btn-primary">Save changes</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
                         <button style="height: 50px" type="button" class="btn btn-outline-dark btn-block"
-                                data-toggle="modal" data-target="#exampleModalCenter2">Забронировать
+                                data-toggle="modal" data-target="#booking">Забронировать
                         </button>
                         <?php if (isset($_SESSION['user_id'])): ?>
                             <?php if (User::checkWishList($filmInfo['id'])) { ?>

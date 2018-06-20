@@ -2,6 +2,13 @@
 
 /* Маршруты которые обрабатывает Router */
 return array(
+
+    /* Сделать заказ */
+    'ajax/bookedSits'=>'order/booking',
+
+    /* Сделать заказ */
+    'ajax/makeOrder'=>'order/makeOrder',
+
     /* Удалить фильм из списка желаемого */
     'ajax/deleteToWishList'=>'user/deleteFilmToWishList',
 

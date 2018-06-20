@@ -3,6 +3,7 @@ require_once ROOT . '/models/Films.php';
 
 class UserController
 {
+
     /* Удалить из списка желаемого */
     public function actionDeleteFilmToWishList()
     {

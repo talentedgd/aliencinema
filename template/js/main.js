@@ -1,3 +1,6 @@
+var sits = [];
+var sitsList = "";
+
 /* Регистрация пользователя Ajax*/
 $('button#registration').on('click', function (e) {
     e.preventDefault();
@@ -218,3 +221,45 @@ $('.delete-to-wish-list').on('click', function (e) {
         window.location.reload();
     }
 });
+
+/* Выбор места */
+$('.sits').on('click', function (e) {
+    e.preventDefault();
+    var exist = false;
+    $id = $(this).attr('id');
+    if (sits.length > 0) {
+        for (var i = 0; i < sits.length; i++) {
+            if (sits[i] != $id) continue;
+            else {
+                exist = i;
+                break;
+            }
+        }
+    }
+    if (exist) {
+        $(this).attr("class", "btn btn-primary");
+        sits.splice(exist, 1);
+    }
+    else {
+        $(this).attr("class", "btn btn-success");
+        sits.push($id);
+    }
+});
+
+$('#submit-sits').on('click', function (e) {
+    e.preventDefault();
+    $sitsList = JSON.stringify(sits);
+    $.post('/ajax/bookedSits', {
+            sits: $sitsList,
+            session: $('.session').attr('id'),
+            hall: $('.hall').attr('id'),
+            email: $('#email-order').val(),
+        },
+        onAjaxSuccess
+    )
+    ;
+
+    function onAjaxSuccess(data) {
+        alert(data);
+    }
+})

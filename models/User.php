@@ -2,7 +2,6 @@
 
 class User
 {
-
     /* Проверить есть в списке желаемого даг=наго юзера фильм */
     public static function checkWishList($film_id)
     {
@@ -76,10 +75,12 @@ class User
     /* Проверяет админ ли пользователь */
     public static function userIsAdmin()
     {
-        $db = Db::getConnection();
-        $result = $db->query('SELECT is_admin FROM registered_user WHERE id=' . $_SESSION['user_id']);
-        $result = $result->fetch();
-        if ($result['is_admin'] == 1) return true;
+        if (isset($_SESSION['user_id'])) {
+            $db = Db::getConnection();
+            $result = $db->query('SELECT is_admin FROM registered_user WHERE id=' . $_SESSION['user_id']);
+            $result = $result->fetch();
+            if ($result['is_admin'] == 1) return true;
+        }
         return false;
     }
 
