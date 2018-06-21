@@ -43,9 +43,9 @@
                 <div class="tab-content" id="myTabContent">
 
                     <!-- Рассписание на сегодня -->
-                    <form action="/ajax/makeOrder" method="post">
-                        <div class="tab-pane fade show active" id="today" role="tabpanel"
-                             aria-labelledby="today-tab">
+                    <div class="tab-pane fade show active" id="today" role="tabpanel"
+                         aria-labelledby="today-tab">
+                        <form action="/ajax/makeOrder" method="post">
                             <div class="container">
                                 <div class="row">
                                     <div class="col"><br>
@@ -72,32 +72,157 @@
                                 </div>
                             </div>
                             <br>
-                        </div>
-                        <button id="submit-order" type="submit" class="btn btn-primary">Готово</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
-                        </button>
-                    </form>
+                            <button id="submit-order" type="submit" class="btn btn-primary">Готово</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                            </button>
+                        </form>
+                    </div>
 
                     <!-- Рассписание на завтра -->
                     <div class="tab-pane fade" id="tomorrow" role="tabpanel"
-                         aria-labelledby="tomorrow-tab">...
+                         aria-labelledby="tomorrow-tab">
+                        <form action="/ajax/makeOrder" method="post">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col"><br>
+                                        <!-- Сеансы -->
+                                        <select class="custom-select" name="session">
+                                            <?php $i = 0;
+                                            foreach ($tomorrowSessionList as $item): ?>
+                                                <option value="<?php echo $item['id']; ?>" <?php echo ($i > 0) ? '' : 'selected'; ?>>
+                                                    <?php echo $item['time']; ?>
+                                                </option>
+                                                <?php $i++; endforeach; ?>
+                                        </select><br><br>
+
+                                        <!-- Залы -->
+                                        <select class="custom-select" name="hall">
+                                            <?php $i = 0;
+                                            foreach ($tomorrowSessionList as $item): ?>
+                                                <option value="<?php echo $item['hall_id']; ?>" <?php echo ($i > 0) ? '' : 'selected'; ?>>
+                                                    Зал <?php echo $item['hall_id']; ?>
+                                                </option>
+                                                <?php $i++; endforeach; ?>
+                                        </select><br><br>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <button id="submit-order" type="submit" class="btn btn-primary">Готово</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                            </button>
+                        </form>
                     </div>
 
                     <!-- Рассписание на после завтра -->
                     <div class="tab-pane fade" id="after-tomorrow" role="tabpanel"
-                         aria-labelledby="after-tomorrow-tab">...
+                         aria-labelledby="after-tomorrow-tab">
+                        <form action="/ajax/makeOrder" method="post">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col"><br>
+                                        <!-- Сеансы -->
+                                        <select class="custom-select" name="session">
+                                            <?php $i = 0;
+                                            foreach ($tomorrowSessionList2 as $item): ?>
+                                                <option value="<?php echo $item['id']; ?>" <?php echo ($i > 0) ? '' : 'selected'; ?>>
+                                                    <?php echo $item['time']; ?>
+                                                </option>
+                                                <?php $i++; endforeach; ?>
+                                        </select><br><br>
+
+                                        <!-- Залы -->
+                                        <select class="custom-select" name="hall">
+                                            <?php $i = 0;
+                                            foreach ($tomorrowSessionList2 as $item): ?>
+                                                <option value="<?php echo $item['hall_id']; ?>" <?php echo ($i > 0) ? '' : 'selected'; ?>>
+                                                    Зал <?php echo $item['hall_id']; ?>
+                                                </option>
+                                                <?php $i++; endforeach; ?>
+                                        </select><br><br>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <button id="submit-order" type="submit" class="btn btn-primary">Готово</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                            </button>
+                        </form>
+
                     </div>
 
                     <!-- Рассписание на после-после завтра =) -->
                     <div class="tab-pane fade" id="day4" role="tabpanel"
                          aria-labelledby="day4-tab">
-                        ...
+                        <form action="/ajax/makeOrder" method="post">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col"><br>
+                                        <!-- Сеансы -->
+                                        <select class="custom-select" name="session">
+                                            <?php $i = 0;
+                                            foreach ($tomorrowSessionList3 as $item): ?>
+                                                <option value="<?php echo $item['id']; ?>" <?php echo ($i > 0) ? '' : 'selected'; ?>>
+                                                    <?php echo $item['time']; ?>
+                                                </option>
+                                                <?php $i++; endforeach; ?>
+                                        </select><br><br>
+
+                                        <!-- Залы -->
+                                        <select class="custom-select" name="hall">
+                                            <?php $i = 0;
+                                            foreach ($tomorrowSessionList3 as $item): ?>
+                                                <option value="<?php echo $item['hall_id']; ?>" <?php echo ($i > 0) ? '' : 'selected'; ?>>
+                                                    Зал <?php echo $item['hall_id']; ?>
+                                                </option>
+                                                <?php $i++; endforeach; ?>
+                                        </select><br><br>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <button id="submit-order" type="submit" class="btn btn-primary">Готово</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                            </button>
+                        </form>
+
                     </div>
 
                     <!-- Рассписание на после-после-после завтра -->
                     <div class="tab-pane fade" id="day5" role="tabpanel"
                          aria-labelledby="day5-tab">
-                        ...
+                        <form action="/ajax/makeOrder" method="post">
+                            <div class="container">
+                                <div class="row">
+                                    <div class="col"><br>
+                                        <!-- Сеансы -->
+                                        <select class="custom-select" name="session">
+                                            <?php $i = 0;
+                                            foreach ($tomorrowSessionList4 as $item): ?>
+                                                <option value="<?php echo $item['id']; ?>" <?php echo ($i > 0) ? '' : 'selected'; ?>>
+                                                    <?php echo $item['time']; ?>
+                                                </option>
+                                                <?php $i++; endforeach; ?>
+                                        </select><br><br>
+
+                                        <!-- Залы -->
+                                        <select class="custom-select" name="hall">
+                                            <?php $i = 0;
+                                            foreach ($tomorrowSessionList4 as $item): ?>
+                                                <option value="<?php echo $item['hall_id']; ?>" <?php echo ($i > 0) ? '' : 'selected'; ?>>
+                                                    Зал <?php echo $item['hall_id']; ?>
+                                                </option>
+                                                <?php $i++; endforeach; ?>
+                                        </select><br><br>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <button id="submit-order" type="submit" class="btn btn-primary">Готово</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Закрыть
+                            </button>
+                        </form>
+
                     </div>
                 </div>
             </div>

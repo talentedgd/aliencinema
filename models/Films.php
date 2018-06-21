@@ -6,12 +6,10 @@ class Films
     const DEFAULT_IMAGE = '/template/img/empty_image.jpg';
     const DEFAULT_POSTER = '/template/img/empty_poster.jpg';
 
-
-    /* Список сегодняшних сеансов */
-    public static function getOrderDataToday($film_id)
+    /* Список сеансов на определенный день*/
+    public static function getOrderDataToday($film_id, $date)
     {
         $db = Db::getConnection();
-        $date = date('Y-m-d');
         $result = $db->query("SELECT id, time, hall_id FROM session WHERE date='$date' AND film_id = $film_id");
         $todaySessionList = array();
         $i = 0;
@@ -27,11 +25,14 @@ class Films
     /* Добавление жанра */
     public static function addGenre($genreName)
     {
+        if (!$genreName) return false;
         $db = Db::getConnection();
+        /* Проверка на наличие такого жанра */
         $result = $db->prepare("SELECT name FROM genre WHERE name = :genreName");
         $result->bindParam(':genreName', $genreName, PDO::PARAM_STR);
         $result->execute();
         if ($row = $result->fetch()) return false;
+        /* Добавление жанра */
         $result = $db->prepare("INSERT INTO genre(name) VALUES (:genreName)");
         $result->bindParam(':genreName', $genreName, PDO::PARAM_STR);
         $result->execute();
@@ -39,9 +40,20 @@ class Films
     }
 
     /* Добавление фильма */
-    public static function addFilm($filmName, $filmAge, $filmOriginalName, $filmProducer, $filmRentStart, $filmRentEnd, $filmRating, $filmLanguage, $filmDuration, $filmProduction, $filmScenario, $filmStarring, $filmDescription, $filmTrailer, $isAvailable, $isImportant)
+    public static function addFilm($genres, $filmName, $filmAge, $filmOriginalName, $filmProducer, $filmRentStart, $filmRentEnd, $filmRating, $filmLanguage, $filmDuration, $filmProduction, $filmScenario, $filmStarring, $filmDescription, $filmTrailer, $isAvailable, $isImportant)
     {
+        /* Валидация полей */
+        if ((!$filmName || !$filmAge || !$filmOriginalName || !$filmProducer || !$filmRentStart || !$filmRentEnd || !$filmRating || !$filmLanguage || !$filmDuration || !$filmProduction || !$filmScenario || !$filmStarring || !$filmDescription || !$filmTrailer) || ($filmAge < 0 && $filmAge > 150) || (strtotime($filmRentStart) > strtotime($filmRentEnd))) return false;
+
         $db = Db::getConnection();
+
+        /* Проверка фильма на существование */
+        $checkName = $db->prepare("SELECT name FROM film WHERE name=:filmName");
+        $checkName->bindParam(':filmName', $filmName, PDO::PARAM_STR);
+        $checkName->execute();
+        if ($checkName->fetch()) return false;
+
+        /* Добавление фильма */
         $result = $db->prepare("INSERT INTO film(name, age, original_name, producer, rent_start, rent_end, rating, language, duration, production, scenario, starring, is_available, trailer, description, is_important) VALUES (:filmName, :filmAge, :filmOriginalName, :filmProducer, :filmRentStart, :filmRentEnd, :filmRating, :filmLanguage, :filmDuration, :filmProduction, :filmScenario, :filmStarring, :isAvailable, :filmTrailer, :filmDescription, :isImportant)");
         $result->bindParam(':filmName', $filmName, PDO::PARAM_STR);
         $result->bindParam(':filmAge', $filmAge, PDO::PARAM_INT);
@@ -59,8 +71,17 @@ class Films
         $result->bindParam(':filmTrailer', $filmTrailer, PDO::PARAM_STR);
         $result->bindParam(':filmDescription', $filmDescription, PDO::PARAM_STR);
         $result->bindParam(':isImportant', $isImportant, PDO::PARAM_INT);
-        if ($result->execute()) return true;
-        return false;
+        $result->execute();
+
+        $result = $db->prepare("SELECT id FROM film WHERE name=:filmName");
+        $result->bindParam(':filmName', $filmName, PDO::PARAM_STR);
+        $result->execute();
+        $result = $result->fetch();
+        $id = (int)$result['id'];
+        foreach ($genres as $genre)
+            $db->query("INSERT INTO film_genre(film_id, genre_id) VALUES ($id, $genre)");
+
+        return true;
     }
 
     /* Добавление сеанса */
@@ -199,6 +220,29 @@ class Films
         return false;
     }
 
+    /* Получить список заказов для пользователя */
+    public static function getUserOrderList()
+    {
+        $db = Db::getConnection();
+        $orderList = array();
+        $userId = $_SESSION['user_id'];
+        $result = $db->query("SELECT booking.id, film.name, booking.row, booking.place, booking.status FROM film,booking,session WHERE booking.user_id=$userId AND session.id=booking.session_id AND film.id=session.id");
+        $i = 0;
+
+        if (!empty($result)) {
+            while ($row = $result->fetch()) {
+                $orderList[$i]['id'] = $row['id'];
+                $orderList[$i]['name'] = $row['name'];
+                $orderList[$i]['row'] = $row['row'];
+                $orderList[$i]['place'] = $row['place'];
+                $orderList[$i]['status'] = $row['status'];
+                $i++;
+            }
+            return $orderList;
+        }
+        return false;
+    }
+
     /* Получить список заказов для администратора */
     public static function getOrderList()
     {
@@ -242,7 +286,12 @@ class Films
                 $filmsList[$i]['age'] = $row['age'];
                 $filmsList[$i]['soon'] = $row['is_available'];
                 $filmsList[$i]['image'] = self::getPictureById($id);
-
+                $filmGenres = $db->query("SELECT genre.name FROM genre,film_genre WHERE film_genre.film_id = $id AND film_genre.genre_id=genre.id");
+                $genreList = "";
+                while ($rowGenres = $filmGenres->fetch()) {
+                    $genreList .= $rowGenres['name'] . ', ';
+                }
+                $filmsList[$i]['genres'] = substr($genreList, 0, strlen($genreList) - 2);
                 $i++;
             }
         }
@@ -264,7 +313,6 @@ class Films
             $filmsList[$i]['id'] = $id;
             $filmsList[$i]['name'] = $row['name'];
             $filmsList[$i]['image'] = self::getPictureById($id);
-
             $i++;
         }
 
@@ -289,7 +337,12 @@ class Films
             $filmList[$i]['age'] = $row['age'];
             $filmList[$i]['image'] = self::getPictureById($id);
             $filmList[$i]['soon'] = $row['is_available'];
-
+            $filmGenres = $db->query("SELECT genre.name FROM genre,film_genre WHERE film_genre.film_id = $id AND film_genre.genre_id=genre.id");
+            $genreList = "";
+            while ($rowGenres = $filmGenres->fetch()) {
+                $genreList .= $rowGenres['name'] . ', ';
+            }
+            $filmList[$i]['genres'] = substr($genreList, 0, strlen($genreList) - 2);
             $i++;
         }
 
@@ -312,7 +365,12 @@ class Films
             $filmsList[$i]['rating'] = $row['rating'];
             $filmsList[$i]['age'] = $row['age'];
             $filmsList[$i]['image'] = self::getPictureById($id);
-
+            $filmGenres = $db->query("SELECT genre.name FROM genre,film_genre WHERE film_genre.film_id = $id AND film_genre.genre_id=genre.id");
+            $genreList = "";
+            while ($rowGenres = $filmGenres->fetch()) {
+                $genreList .= $rowGenres['name'] . ', ';
+            }
+            $filmsList[$i]['genres'] = substr($genreList, 0, strlen($genreList) - 2);
             $i++;
         }
         return $filmsList;
@@ -335,7 +393,12 @@ class Films
             $filmsList[$i]['age'] = $row['age'];
             $filmsList[$i]['image'] = self::getPictureById($id);
             $filmsList[$i]['soon'] = $row['is_available'];
-
+            $filmGenres = $db->query("SELECT genre.name FROM genre,film_genre WHERE film_genre.film_id = $id AND film_genre.genre_id=genre.id");
+            $genreList = "";
+            while ($rowGenres = $filmGenres->fetch()) {
+                $genreList .= $rowGenres['name'] . ', ';
+            }
+            $filmsList[$i]['genres'] = substr($genreList, 0, strlen($genreList) - 2);
             $i++;
         }
         return $filmsList;
@@ -352,10 +415,9 @@ class Films
 
         $result['image'] = self::getPictureById($id);
 
-        $genreResult = $db->prepare('SELECT genre.name FROM genre, film_genre, film WHERE genre.id = film_genre.genre_id AND film_genre.film_id = film.id');
-        $genreResult->bindParam(':id', $id, PDO::PARAM_INT);
-        $genreResult->execute();
+        $genreResult = $db->query("SELECT genre.name FROM genre, film_genre WHERE film_genre.film_id=$id AND film_genre.genre_id=genre.id");
         $genreList = "";
+
         while ($row = $genreResult->fetch()) {
             $genreList .= $row['name'] . ', ';
         }

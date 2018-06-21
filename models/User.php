@@ -2,7 +2,7 @@
 
 class User
 {
-    /* Проверить есть в списке желаемого даг=наго юзера фильм */
+    /* Проверить есть в списке желаемого данго юзера фильм */
     public static function checkWishList($film_id)
     {
         $db = Db::getConnection();
@@ -55,10 +55,11 @@ class User
     {
         $db = Db::getConnection();
         $id = $_SESSION['user_id'];
-        $result = $db->query("SELECT film.name, film.rent_start, film.rent_end, film.is_available FROM film, wish_list WHERE wish_list.registered_user_id='$id'");
+        $result = $db->query("SELECT  film.id, film.name, film.rent_start, film.rent_end, film.is_available FROM film, wish_list WHERE wish_list.registered_user_id = $id AND wish_list.film_id = film.id");
         $i = 0;
         $wishList = array();
         while ($row = $result->fetch()) {
+            $wishList[$i]['id'] = $row['id'];
             $wishList[$i]['name'] = $row['name'];
             $wishList[$i]['rent_start'] = $row['rent_start'];
             $wishList[$i]['rent_end'] = $row['rent_start'];
@@ -139,9 +140,29 @@ class User
         return false;
     }
 
-    /* Метод проверки email*/
-    public
-    static function checkEmail($email)
+    /* Проверяет на валидность введенный незарегестрированым пользователем  email */
+    public static function checkEmailValid($email)
+    {
+        if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $db = Db::getConnection();
+            $result = $db->prepare("SELECT id FROM user WHERE email=:email");
+            $result->bindParam(':email', $email, PDO::PARAM_STR);
+            $result->execute();
+            if ($row = $result->fetch()) {
+                $id = (int)$row['id'];
+                $resultRegUser = $db->query("SELECT name FROM registered_user WHERE id=$id");
+                if ($resultRegUser->fetch()) {
+                    return false;
+                }
+                return true;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    /* Метод проверки email */
+    public static function checkEmail($email)
     {
         if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
 

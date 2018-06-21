@@ -80,6 +80,21 @@
                                     <label for="film-name">Название фильма</label>
                                     <input required type="text" class="form-control" id="film-name"
                                            placeholder="Введите название...">
+
+                                    <?php
+                                    if ($genreList) { ?>
+                                        <label for="film-name">Выберите жанры для фильма</label>
+                                        <?php foreach ($genreList as $genre): ?>
+
+                                            <div class="form-group form-check">
+                                                <input type="checkbox" id="<?php echo $genre['id']; ?>"
+                                                       class="form-check-input film-genre">
+                                                <label for="<?php echo $genre['id']; ?>"
+                                                       class="form-check-label"><?php echo $genre['name']; ?></label>
+                                            </div>
+
+                                        <?php endforeach;
+                                    } ?>
                                     <label for="film-age">Возрастные ограничения</label>
                                     <input type="text" class="form-control" id="film-age"
                                            placeholder="Введите возраст...">
@@ -254,137 +269,150 @@
 
                 <!-- Иформация о заказах для аминистратора -->
                 <div class="tab-pane fade show active" id="order" role="tabpanel" aria-labelledby="order-tab">
-                    <table class="table">
-                        <thead>
-                        <tr class="table-active">
-                            <th scope="col">#</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Фильма</th>
-                            <th scope="col">Ряд</th>
-                            <th scope="col">Место</th>
-                            <th scope="col">Статус</th>
-                            <th scope="col">Действие</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php $i = 0;
-                        foreach ($orderList as $orderItem): ?>
-                            <tr>
-                                <th scope="row"><?php echo ++$i; ?></th>
-                                <td><?php echo $orderItem['email']; ?></td>
-                                <td><?php echo $orderItem['name']; ?></td>
-                                <td><?php echo $orderItem['row']; ?></td>
-                                <td><?php echo $orderItem['place']; ?></td>
-                                <td><?php echo ($orderItem['status'] == 'expects') ? 'В ожидании' : ''; ?></td>
-                                <td>
-                                    <button type="button" id="<?php echo $orderItem['id']; ?>" value="confirm"
-                                            class="order-admin-decision btn btn-outline-success">Принять
-                                    </button>
-                                    <button type="button" id="<?php echo $orderItem['id']; ?>" value="cancel"
-                                            class="order-admin-decision btn btn-outline-danger">Отменить
-                                    </button>
-                                </td>
+                    <?php if ($orderList) { ?>
+                        <table class="table">
+                            <thead>
+                            <tr class="table-active">
+                                <th scope="col">#</th>
+                                <th scope="col">Email</th>
+                                <th scope="col">Фильма</th>
+                                <th scope="col">Ряд</th>
+                                <th scope="col">Место</th>
+                                <th scope="col">Статус</th>
+                                <th scope="col">Действие</th>
                             </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            <?php $i = 0;
+                            foreach ($orderList as $orderItem): ?>
+                                <tr>
+                                    <th scope="row"><?php echo ++$i; ?></th>
+                                    <td><?php echo $orderItem['email']; ?></td>
+                                    <td><?php echo $orderItem['name']; ?></td>
+                                    <td><?php echo $orderItem['row']; ?></td>
+                                    <td><?php echo $orderItem['place']; ?></td>
+                                    <td><?php if ($orderItem['status'] == 'expects') echo 'В ожидании';
+                                        elseif ($orderItem['status'] == 'canceled') echo 'Отклонен';
+                                        else echo 'Принят';
+                                        ?></td>
+                                    <td>
+                                        <?php if (($orderItem['status'] != 'canceled') && ($orderItem['status'] != 'success')) { ?>
+                                            <button type="button" id="<?php echo $orderItem['id']; ?>" value="confirm"
+                                                    class="order-admin-success btn btn-outline-success">Принять
+                                            </button>
+                                            <button type="button" id="<?php echo $orderItem['id']; ?>" value="cancel"
+                                                    class="order-admin-cancel btn btn-outline-danger">Отменить
+                                            </button>
+                                        <?php } else echo 'Действие не требуется'; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php } else echo 'Список заказов пуст'; ?>
                 </div>
 
                 <!-- Иформация о фильмах для аминистратора -->
                 <div class="tab-pane fade" id="film" role="tabpanel" aria-labelledby="film-tab">
-                    <table class="table">
-                        <thead>
-                        <tr class="table-active">
-                            <th scope="col">#</th>
-                            <th scope="col">ID</th>
-                            <th scope="col">Имя</th>
-                            <th scope="col">Возраст</th>
-                            <th scope="col">Рейтинг</th>
-                            <th scope="col">Доступность</th>
-                            <th scope="col">Действие</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php $i = 0;
-                        foreach ($filmList as $film): ?>
-                            <tr>
-                                <th scope="row"><?php echo ++$i; ?></th>
-                                <td><?php echo $film['id']; ?></td>
-                                <td><?php echo $film['name']; ?></td>
-                                <td><?php echo $film['age']; ?></td>
-                                <td><?php echo $film['rating']; ?></td>
-                                <td><?php echo ($film['soon'] != '0') ? 'Доступен' : 'Не доступен'; ?></td>
-                                <td>
-                                    <button value="film" type="button" id="<?php echo $film['id']; ?>"
-                                            class="order-admin-decision btn btn-outline-danger delete">Удалить
-                                    </button>
-                                </td>
+                    <?php if ($filmList) { ?>
+                        <table class="table">
+                            <thead>
+                            <tr class="table-active">
+                                <th scope="col">#</th>
+                                <th scope="col">ID</th>
+                                <th scope="col">Имя</th>
+                                <th scope="col">Возраст</th>
+                                <th scope="col">Рейтинг</th>
+                                <th scope="col">Доступность</th>
+                                <th scope="col">Действие</th>
                             </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            <?php $i = 0;
+                            foreach ($filmList as $film): ?>
+                                <tr>
+                                    <th scope="row"><?php echo ++$i; ?></th>
+                                    <td><?php echo $film['id']; ?></td>
+                                    <td><?php echo $film['name']; ?></td>
+                                    <td><?php echo $film['age']; ?></td>
+                                    <td><?php echo $film['rating']; ?></td>
+                                    <td><?php echo ($film['soon'] != '0') ? 'Доступен' : 'Не доступен'; ?></td>
+                                    <td>
+                                        <button value="film" type="button" id="<?php echo $film['id']; ?>"
+                                                class="order-admin-decision btn btn-outline-danger delete">Удалить
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php } else echo 'Список фильмов пуст' ?>
                 </div>
 
                 <!-- Иформация о сеансах для аминистратора -->
                 <div class="tab-pane fade" id="session" role="tabpanel" aria-labelledby="session-tab">
-                    <table class="table">
-                        <thead>
-                        <tr class="table-active">
-                            <th scope="col">#</th>
-                            <th scope="col">Фильм</th>
-                            <th scope="col">Зал</th>
-                            <th scope="col">Дата</th>
-                            <th scope="col">Время</th>
-                            <th scope="col">Цена</th>
-                            <th scope="col">Действие</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php $i = 0;
-                        foreach ($sessionList as $sessionItem): ?>
-                            <tr>
-                                <th scope="row"><?php echo ++$i; ?></th>
-                                <td><?php echo $sessionItem['film_name']; ?></td>
-                                <td><?php echo $sessionItem['hall_name']; ?></td>
-                                <td><?php echo $sessionItem['date']; ?></td>
-                                <td><?php echo $sessionItem['time']; ?></td>
-                                <td><?php echo $sessionItem['price']; ?> грн</td>
-                                <td>
-                                    <button value="session" type="button" id="<?php echo $sessionItem['id']; ?>"
-                                            class="order-admin-decision btn btn-outline-danger delete">Удалить
-                                    </button>
-                                </td>
+                    <?php if ($sessionList) { ?>
+                        <table class="table">
+                            <thead>
+                            <tr class="table-active">
+                                <th scope="col">#</th>
+                                <th scope="col">Фильм</th>
+                                <th scope="col">Зал</th>
+                                <th scope="col">Дата</th>
+                                <th scope="col">Время</th>
+                                <th scope="col">Цена</th>
+                                <th scope="col">Действие</th>
                             </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            <?php $i = 0;
+                            foreach ($sessionList as $sessionItem): ?>
+                                <tr>
+                                    <th scope="row"><?php echo ++$i; ?></th>
+                                    <td><?php echo $sessionItem['film_name']; ?></td>
+                                    <td><?php echo $sessionItem['hall_name']; ?></td>
+                                    <td><?php echo $sessionItem['date']; ?></td>
+                                    <td><?php echo $sessionItem['time']; ?></td>
+                                    <td><?php echo $sessionItem['price']; ?> грн</td>
+                                    <td>
+                                        <button value="session" type="button" id="<?php echo $sessionItem['id']; ?>"
+                                                class="order-admin-decision btn btn-outline-danger delete">Удалить
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php } else echo 'Список сеансов пуст'; ?>
                 </div>
 
                 <!-- Иформация о жанрах для аминистратора -->
                 <div class="tab-pane fade" id="genre" role="tabpanel" aria-labelledby="genre-tab">
-                    <table class="table" id="admin-list">
-                        <thead>
-                        <tr class="table-active">
-                            <th scope="col">#</th>
-                            <th scope="col">Название</th>
-                            <th scope="col">Действие</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <?php $i = 0;
-                        foreach ($genreList as $genreItem): ?>
-                            <tr>
-                                <th scope="row"><?php echo ++$i; ?></th>
-                                <td><?php echo $genreItem['name']; ?></td>
-                                <td>
-                                    <button value="genre" type="button" id="<?php echo $genreItem['id']; ?>"
-                                            class="order-admin-decision btn btn-outline-danger delete">Удалить
-                                    </button>
-                                </td>
+                    <?php if ($genreList) { ?>
+                        <table class="table" id="admin-list">
+                            <thead>
+                            <tr class="table-active">
+                                <th scope="col">#</th>
+                                <th scope="col">Название</th>
+                                <th scope="col">Действие</th>
                             </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                            <?php $i = 0;
+                            foreach ($genreList as $genreItem): ?>
+                                <tr>
+                                    <th scope="row"><?php echo ++$i; ?></th>
+                                    <td><?php echo $genreItem['name']; ?></td>
+                                    <td>
+                                        <button value="genre" type="button" id="<?php echo $genreItem['id']; ?>"
+                                                class="order-admin-decision btn btn-outline-danger delete">Удалить
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php } else echo 'Список жанров пуст'; ?>
                 </div>
             </div>
 
@@ -402,48 +430,106 @@
             </ul>
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-                    Заказы
-                </div>
-                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-                    <!-- Список-->
+
+                    <!-- Список заказов -->
                     <div class="row">
                         <div class="col">
-                            <table class="table table-sm">
-                                <thead>
-                                <tr class="table-active">
-                                    <th scope="col">#</th>
-                                    <th scope="col">Навзвание</th>
-                                    <th scope="col">Начало проката</th>
-                                    <th scope="col">Конец проката</th>
-                                    <th scope="col">Наличие</th>
-                                    <th scope="col" colspan="2" style="text-align: center;">Действие</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <?php foreach ($wishList as $wishFilm): ?>
-                                    <tr class="table-<?php echo ($wishFilm['is_available'] == '1') ? 'success' : 'primary'; ?>">
-                                        <th scope="row">1</th>
-                                        <td><?php echo $wishFilm['name']; ?></td>
-                                        <td><?php echo $wishFilm['rent_start']; ?></td>
-                                        <td><?php echo $wishFilm['rent_end']; ?></td>
-                                        <td><?php echo ($wishFilm['is_available'] == '1') ? 'Доступен' : 'Отсутствует'; ?></td>
-                                        <td>
-                                            <button <?php echo ($wishFilm['is_available'] == '1') ? '' : 'disabled'; ?>
-                                                    value="film" type="button" id="<?php echo $wishFilm['id']; ?>"
-                                                    class="order-admin-decision btn btn-outline-danger delete">
-                                                Забронировать
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <button
-                                                    value="film" type="button" id="<?php echo $wishFilm['id']; ?>"
-                                                    class="delete-to-wish-list order-admin-decision btn btn-outline-danger delete">Удалить
-                                            </button>
-                                        </td>
+                            <?php if ($userOrderList) { ?>
+                                <table class="table table-sm">
+                                    <thead>
+                                    <tr class="table-active">
+                                        <th scope="col">#</th>
+                                        <th scope="col">Навзвание фильма</th>
+                                        <th scope="col">Место</th>
+                                        <th scope="col">Ряд</th>
+                                        <th scope="col">Статус</th>
+                                        <th scope="col">Действие</th>
                                     </tr>
-                                <?php endforeach; ?>
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                    <?php
+                                    $i = 0;
+                                    foreach ($userOrderList as $userOrderItem): ?>
+                                        <tr class="table-<?php if ($userOrderItem['status'] == 'expects') {
+                                            echo 'primary';
+                                        } elseif ($userOrderItem['status'] == 'canceled') {
+                                            echo 'danger';
+                                        } else {
+                                            echo 'success';
+                                        } ?>">
+                                            <th scope="row"><?php echo ++$i; ?></th>
+                                            <td><?php echo $userOrderItem['name']; ?></td>
+                                            <td><?php echo $userOrderItem['place']; ?></td>
+                                            <td><?php echo $userOrderItem['row']; ?></td>
+                                            <td><?php if ($userOrderItem['status'] == 'expects') {
+                                                    echo 'Ожидает подтверждения';
+                                                } elseif ($userOrderItem['status'] == 'canceled') {
+                                                    echo 'Отменен';
+                                                } else {
+                                                    echo 'Принят';
+                                                } ?></td>
+                                            <td>
+                                                <button
+                                                        value="film" type="button"
+                                                        id="<?php echo $userOrderItem['id']; ?>"
+                                                        class="cancel-order order-admin-decision btn btn-outline-danger">
+                                                    Отменить
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            <?php } else echo 'Список фильмов пуст' ?>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+                    <!-- Список желаемого -->
+                    <div class="row">
+                        <div class="col">
+                            <?php if ($wishList) { ?>
+                                <table class="table table-sm">
+                                    <thead>
+                                    <tr class="table-active">
+                                        <th scope="col">#</th>
+                                        <th scope="col">Навзвание</th>
+                                        <th scope="col">Начало проката</th>
+                                        <th scope="col">Конец проката</th>
+                                        <th scope="col">Наличие</th>
+                                        <th scope="col" colspan="2" style="text-align: center;">Действие</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <?php $i = 0;
+                                    foreach ($wishList as $wishFilm): ?>
+                                        <tr class="table-<?php echo ($wishFilm['is_available'] == '1') ? 'success' : 'primary'; ?>">
+                                            <th scope="row"><?php echo ++$i; ?></th>
+                                            <td><?php echo $wishFilm['name']; ?></td>
+                                            <td><?php echo $wishFilm['rent_start']; ?></td>
+                                            <td><?php echo $wishFilm['rent_end']; ?></td>
+                                            <td><?php echo ($wishFilm['is_available'] == '1') ? 'Доступен' : 'Отсутствует'; ?></td>
+                                            <td>
+                                                <button <?php echo ($wishFilm['is_available'] == '1') ? '' : 'disabled'; ?>
+                                                        value="film" type="button" id="<?php echo $wishFilm['id']; ?>"
+                                                        class="order-admin-decision btn btn-outline-danger">
+                                                    Забронировать
+                                                </button>
+                                            </td>
+                                            <td>
+                                                <button
+                                                        value="film" type="button" id="<?php echo $wishFilm['id']; ?>"
+                                                        class="delete-to-wish-list order-admin-decision btn btn-outline-danger">
+                                                    Удалить
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                    </tbody>
+                                </table>
+                            <?php } else echo 'Список фильмов пуст' ?>
                         </div>
                     </div>
                 </div>

@@ -3,6 +3,15 @@
 /* Маршруты которые обрабатывает Router */
 return array(
 
+    /* Подтвердить заказ */
+    'ajax/accessOrderAdmin' => 'order/accessAdmin',
+
+    /* Отменить заказ (администратор) */
+    'ajax/cancelOrderAdmin' => 'order/cancelAdmin',
+
+    /* Отменить заказ */
+    'ajax/cancelOrder' => 'order/cancel',
+
     /* Сделать заказ */
     'ajax/bookedSits'=>'order/booking',
 

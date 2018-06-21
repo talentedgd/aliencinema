@@ -118,6 +118,12 @@ $('#submit-essence').on('click', function (e) {
 /* Добавление фильма */
 $('#submit-film').on('click', function (e) {
     e.preventDefault();
+    $genres = [];
+    $('.film-genre').each(function (index, value) {
+        if (value.checked) {
+            $genres.push($(value).attr("id"));
+        }
+    });
     $filmName = $('#film-name').val();
     $filmAge = $('#film-age').val();
     $filmOriginalName = $('#film-original-name').val();
@@ -134,7 +140,9 @@ $('#submit-film').on('click', function (e) {
     $filmTrailer = $('#film-trailer').val();
     $isAvailable = $('#is-available').val();
     $isImportant = $('#is-important').val();
-    $.post('ajax/add/essence/film', {
+
+    $.post('/ajax/add/essence/film', {
+        genres: JSON.stringify($genres),
         filmName: $filmName,
         filmAge: $filmAge,
         filmOriginalName: $filmOriginalName,
@@ -167,7 +175,7 @@ $('#submit-session').on('click', function (e) {
     $sessionTime = $('#session-time').val();
     $sessionPrice = $('#session-price').val();
 
-    $.post('ajax/add/essence/session', {
+    $.post('/ajax/add/essence/session', {
         filmId: $filmId,
         hallId: $hallId,
         sessionDate: $sessionDate,
@@ -185,7 +193,7 @@ $('#submit-genre').on('click', function (e) {
     e.preventDefault();
     $genreName = $('#genre-name').val();
 
-    $.post('ajax/add/essence/genre', {
+    $.post('/ajax/add/essence/genre', {
         genreName: $genreName,
     }, onAjaxSuccess);
 
@@ -212,13 +220,14 @@ $('.add-to-wish-list').on('click', function (e) {
 $('.delete-to-wish-list').on('click', function (e) {
     e.preventDefault()
     $id = $(this).attr('id');
+    $element = $(this);
     $.post('/ajax/deleteToWishList', {
         id: $id,
     }, onAjaxSuccess);
 
     function onAjaxSuccess(data) {
         alert(data);
-        window.location.reload();
+        $element.parents('tr').fadeOut('fast');
     }
 });
 
@@ -241,8 +250,8 @@ $('.sits').on('click', function (e) {
         sits.splice(exist, 1);
     }
     else {
-        $(this).attr("class", "btn btn-success");
         sits.push($id);
+        $(this).attr("class", "btn btn-success");
     }
 });
 
@@ -262,4 +271,46 @@ $('#submit-sits').on('click', function (e) {
     function onAjaxSuccess(data) {
         alert(data);
     }
-})
+});
+
+/* Отмена заказа */
+$('.cancel-order').on('click', function (e) {
+    e.preventDefault();
+    $id = $(this).attr("id");
+    $element = $(this);
+    $.post('/ajax/cancelOrder', {
+        id: $id,
+    }, onAjaxSuccess);
+
+    function onAjaxSuccess(data) {
+        alert(data);
+        $element.parents('tr').fadeOut('fast');
+    }
+
+});
+
+/* Отказ в заказе (администратор) */
+$('.order-admin-cancel').on('click', function (e) {
+    e.preventDefault();
+    $id = $(this).attr("id");
+    $.post('/ajax/cancelOrderAdmin', {
+        id: $id,
+    }, onAjaxSuccess);
+
+    function onAjaxSuccess(data) {
+        alert(data);
+    }
+});
+
+/* Принятие заказа (администратор) */
+$('.order-admin-success').on('click', function (e) {
+    e.preventDefault();
+    $id = $(this).attr("id");
+    $.post('/ajax/accessOrderAdmin', {
+        id: $id,
+    }, onAjaxSuccess);
+
+    function onAjaxSuccess(data) {
+        alert(data);
+    }
+});

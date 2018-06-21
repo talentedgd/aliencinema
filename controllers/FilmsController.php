@@ -8,8 +8,9 @@ class FilmsController
     public function actionAddEssence($target)
     {
         if ($target == 'film') {
+            $genres = json_decode($_POST['genres']);
             $filmName = strip_tags(trim($_POST['filmName']));
-            $filmAge = strip_tags(trim($_POST['filmAge']));
+            $filmAge = (int)strip_tags(trim($_POST['filmAge']));
             $filmOriginalName = strip_tags(trim($_POST['filmOriginalName']));
             $filmProducer = strip_tags(trim($_POST['filmProducer']));
             $filmRentStart = strip_tags(trim($_POST['filmRentStart']));
@@ -24,11 +25,10 @@ class FilmsController
             $filmTrailer = strip_tags(trim($_POST['filmTrailer']));
             $filmDescription = strip_tags(trim($_POST['filmDescription']));
             $isImportant = (int)(strip_tags(trim($_POST['isImportant'] == 'on') ? 1 : 0));
-            if (Films::addFilm($filmName, $filmAge, $filmOriginalName, $filmProducer, $filmRentStart, $filmRentEnd, $filmRating, $filmLanguage, $filmDuration, $filmProduction, $filmScenario, $filmStarring, $filmDescription, $filmTrailer, $isAvailable, $isImportant))
+            if (Films::addFilm($genres, $filmName, $filmAge, $filmOriginalName, $filmProducer, $filmRentStart, $filmRentEnd, $filmRating, $filmLanguage, $filmDuration, $filmProduction, $filmScenario, $filmStarring, $filmDescription, $filmTrailer, $isAvailable, $isImportant))
                 echo 'Фильм успешно добавлен!';
             else echo 'Данные введены не корректно!';
-        }
-        if ($target == 'session') {
+        } elseif ($target == 'session') {
             $filmId = (int)strip_tags(trim($_POST['filmId']));
             $hallId = (int)strip_tags(trim($_POST['hallId']));
             $sessionDate = strip_tags(trim($_POST['sessionDate']));
@@ -120,7 +120,11 @@ class FilmsController
     public function actionInfo($parameters)
     {
         $filmInfo = Films::getFilmInfo($parameters);
-        $todaySessionList = Films::getOrderDataToday($filmInfo['id']);
+        $todaySessionList = Films::getOrderDataToday($filmInfo['id'], date('Y-m-d'));
+        $tomorrowSessionList = Films::getOrderDataToday($filmInfo['id'], date("Y-m-d", strtotime("+1 day")));
+        $tomorrowSessionList2 = Films::getOrderDataToday($filmInfo['id'], date("Y-m-d", strtotime("+2 day")));
+        $tomorrowSessionList3 = Films::getOrderDataToday($filmInfo['id'], date("Y-m-d", strtotime("+3 day")));
+        $tomorrowSessionList4 = Films::getOrderDataToday($filmInfo['id'], date("Y-m-d", strtotime("+4 day")));
         require_once(ROOT . '/views/site/films/film-info.php');
     }
 }

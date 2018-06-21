@@ -3,7 +3,7 @@ body {
     background-size: cover;
 }
 
-#list .form-control{
+#list .form-control {
     margin-bottom: 10px;
 }
 
@@ -101,59 +101,46 @@ nav a div {
 
 /* Заголовок h1*/
 
-.three {
+.one {
     padding: 50px 20px;
     text-align: center;
 }
 
-.three h1 {
-    font-family: 'Merriweather', sans-serif;
+.one h1 {
+    font-family: 'Righteous' sans-serif;
     position: relative;
-    color: #000;
-    background: navajowhite;
-    font-size: 2.5em;
-    font-weight: normal;
-    padding: 10px 40px;
+    color: ghostwhite;
     display: inline-block;
+    border-top: 2px solid;
+    border-bottom: 2px solid;
+    font-size: 3em;
+    padding: 11px 60px;
     margin: 0;
     line-height: 1;
-    border-top-right-radius: 10px;
-    border-top-left-radius: 10px;
 }
 
-.three h1:before {
+.one h1:before, .one h1:after {
     content: "";
     position: absolute;
-    width: 100%;
-    height: 4px;
+    top: 0;
+    width: 30px;
+    height: 100%;
+    border-left: 2px solid;
+    border-right: 2px solid;
+    background: repeating-linear-gradient(180deg, transparent, transparent 2px, ghostwhite 2px, ghostwhite 4px);
+}
+
+.one h1:before {
     left: 0;
-    bottom: -15px;
-    background: navajowhite;
 }
 
-.three h1:after {
-    content: "";
-    position: absolute;
-    height: 0;
-    width: 80%;
-    border-top: 10px solid navajowhite;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: -25px;
+.one h1:after {
+    right: 0;
 }
 
-@media (max-width: 500px) {
-    .three h1 {
-        font-size: 1.8em;
-    }
-}
-
-@media (max-width: 400px) {
-    .three h1 {
-        font-size: 1.5em;
-        padding: 10px 30px;
+@media (max-width: 420px) {
+    .one h1 {
+        font-size: 2em;
     }
 }
 

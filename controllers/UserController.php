@@ -22,7 +22,7 @@ class UserController
         else echo 'Фильм не добавлен!';
     }
 
-    /* Метд для изменения пароля */
+    /* Метод для изменения пароля */
     public function actionChangePassword()
     {
         $oldPassword = "";
@@ -45,6 +45,7 @@ class UserController
             $sessionList = Films::getSessionList();
             $genreList = Films::getGenreList();
             $hallList = Films::getHallList();
+            $userOrderList =Films::getUserOrderList();
 
             if (!User::userIsAdmin()) {
                 $wishList = User::getWishList();
