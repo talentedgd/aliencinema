@@ -4,6 +4,13 @@ require_once ROOT . '/models/Order.php';
 class OrderController
 {
 
+    public function actionTest(){
+
+
+
+        require_once(ROOT . '/views/site/test.php');
+    }
+
     /* Метод для принятия заказов */
     public function actionAccessAdmin()
     {

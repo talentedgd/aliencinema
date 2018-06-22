@@ -2,6 +2,10 @@
 
 class Order
 {
+    public static function test(){
+        $db = Db::getConnection();
+        $result = $db->query("SELECT  FROM name");
+    }
 
     /* Метод получения забронированых мест */
     public static function getBookedSits($place, $row, $hall, $session)
@@ -44,15 +48,16 @@ class Order
         $hall = $hall->fetch();
 
         $id = $_SESSION['user_id'];
+        $sitsInRow = $hall['number_of_sits'] / $hall['number_of_rows'];
         foreach ($sits as $sit) {
             $row = 0;
-            while ($sit >= $hall['number_of_sits']) {
-                $sit -= $hall['number_of_sits'];
+            while ($sit >= $sitsInRow) {
+                $sit -= $sitsInRow;
                 $row++;
             }
             $place = $sit;
             if ($row == 0) $row = 1;
-            if ($place == 0) $place = 1;
+            if ($place == 0) $place = 10;
             $db->query("INSERT INTO booking(user_id, session_id, row, place) VALUES ($id, $sessionId, $row, $place)");
         }
     }
@@ -63,6 +68,7 @@ class Order
         $db = Db::getConnection();
         $hall = $db->query("SELECT number_of_sits, number_of_rows FROM hall WHERE id = $hallId");
         $hall = $hall->fetch();
+        $sitsInRow = $hall['number_of_sits'] / $hall['number_of_rows'];
 
         $resultEmail = $db->prepare("SELECT id FROM user WHERE email = :email");
         $resultEmail->bindParam(':email', $email, PDO::PARAM_STR);
@@ -72,9 +78,15 @@ class Order
             $result = $result->fetch();
             $id = $result['id'];
             foreach ($sits as $sit) {
-                (int)$row = $sit / $hall['number_of_rows'];
-                (int)$place = $sit % $hall['number_of_rows'];
-                $db->query("INSERT INTO booking(user_id, session_id, row, place) VALUES ('$id', '$sessionId', '$row', '$place')");
+                $row = 0;
+                while ($sit >= $sitsInRow) {
+                    $sit -= $sitsInRow;
+                    $row++;
+                }
+                $place = $sit;
+                if ($row == 0) $row = 1;
+                if ($place == 0) $place = 10;
+                $db->query("INSERT INTO booking(user_id, session_id, row, place) VALUES ($id, $sessionId, $row, $place)");
             }
         } else {
             $db->query("INSERT INTO user(email) VALUES ('$email')");
@@ -82,9 +94,16 @@ class Order
             $result = $result->fetch();
             $id = $result['id'];
             foreach ($sits as $sit) {
-                (int)$row = $sit / $hall['number_of_rows'];
-                (int)$place = $sit % $hall['number_of_rows'];
-                $db->query("INSERT INTO booking(user_id, session_id, row, place) VALUES ('$id', '$sessionId', '$row', '$place')");
+                $row = 0;
+                while ($sit >= $sitsInRow) {
+                    $sit -= $sitsInRow;
+                    $row++;
+                }
+                $place = $sit;
+                if ($row == 0) $row = 1;
+                else $row++;
+                if ($place == 0) $place = 10;
+                $db->query("INSERT INTO booking(user_id, session_id, row, place) VALUES ($id, $sessionId, $row, $place)");
             }
         }
 

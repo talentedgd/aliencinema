@@ -285,28 +285,28 @@
                             <tbody>
                             <?php $i = 0;
                             foreach ($orderList as $orderItem): ?>
-                                <tr>
-                                    <th scope="row"><?php echo ++$i; ?></th>
-                                    <td><?php echo $orderItem['email']; ?></td>
-                                    <td><?php echo $orderItem['name']; ?></td>
-                                    <td><?php echo $orderItem['row']; ?></td>
-                                    <td><?php echo $orderItem['place']; ?></td>
-                                    <td><?php if ($orderItem['status'] == 'expects') echo 'В ожидании';
-                                        elseif ($orderItem['status'] == 'canceled') echo 'Отклонен';
-                                        else echo 'Принят';
-                                        ?></td>
-                                    <td>
-                                        <?php if (($orderItem['status'] != 'canceled') && ($orderItem['status'] != 'success')) { ?>
-                                            <button type="button" id="<?php echo $orderItem['id']; ?>" value="confirm"
-                                                    class="order-admin-success btn btn-outline-success">Принять
-                                            </button>
-                                            <button type="button" id="<?php echo $orderItem['id']; ?>" value="cancel"
-                                                    class="order-admin-cancel btn btn-outline-danger">Отменить
-                                            </button>
-                                        <?php } else echo 'Действие не требуется'; ?>
-                                    </td>
-                                </tr>
-                            <?php endforeach; ?>
+                                <?php if (($orderItem['status'] != 'canceled') && ($orderItem['status'] != 'access')): ?>
+                                    <tr>
+                                        <th scope="row"><?php echo ++$i; ?></th>
+                                        <td><?php echo $orderItem['email']; ?></td>
+                                        <td><?php echo $orderItem['name']; ?></td>
+                                        <td><?php echo $orderItem['row']; ?></td>
+                                        <td><?php echo $orderItem['place']; ?></td>
+                                        <td><?php echo 'В ожидании'; ?></td>
+                                        <td>
+                                            <?php if (($orderItem['status'] != 'canceled') && ($orderItem['status'] != 'success')) { ?>
+                                                <button type="button" id="<?php echo $orderItem['id']; ?>"
+                                                        value="confirm"
+                                                        class="order-admin-success btn btn-outline-success">Принять
+                                                </button>
+                                                <button type="button" id="<?php echo $orderItem['id']; ?>"
+                                                        value="cancel"
+                                                        class="order-admin-cancel btn btn-outline-danger">Отменить
+                                                </button>
+                                            <?php } else echo 'Действие не требуется'; ?>
+                                        </td>
+                                    </tr>
+                                <?php endif; endforeach; ?>
                             </tbody>
                         </table>
                     <?php } else echo 'Список заказов пуст'; ?>

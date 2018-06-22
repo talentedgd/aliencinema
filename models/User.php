@@ -86,8 +86,7 @@ class User
     }
 
     /* Метод получения имени авторизованого пользователя */
-    public
-    static function getUserNameBySession()
+    public static function getUserNameBySession()
     {
         $db = Db::getConnection();
         $result = $db->query('SELECT name FROM registered_user WHERE id=' . $_SESSION['user_id']);
@@ -96,8 +95,7 @@ class User
     }
 
     /* Мтод получения email авторизованого пользователя*/
-    public
-    static function getUserEmailBySession()
+    public static function getUserEmailBySession()
     {
         $db = Db::getConnection();
         $result = $db->query('SELECT email FROM user WHERE id=' . $_SESSION['user_id']);
@@ -106,8 +104,7 @@ class User
     }
 
     /* Метод входа */
-    public
-    static function checkDataLogin($email, $password)
+    public static function checkDataLogin($email, $password)
     {
         $db = Db::getConnection();
         $result = $db->prepare('SELECT user.id, registered_user.password FROM user, registered_user WHERE user.email = :email AND user.id = registered_user.id');
@@ -121,8 +118,7 @@ class User
     }
 
     /* Метод проверки имени */
-    public
-    static function checkName($name)
+    public static function checkName($name)
     {
         if (strlen($name) >= 2) {
             return true;
@@ -131,8 +127,7 @@ class User
     }
 
     /* Метод проверки пароля */
-    public
-    static function checkPassword($password)
+    public static function checkPassword($password)
     {
         if (strlen($password) >= 6) {
             return true;
@@ -184,8 +179,7 @@ class User
     }
 
     /* Метод добавления пользователя */
-    public
-    static function addUser($email, $name, $password)
+    public static function addUser($email, $name, $password)
     {
         $db = Db::getConnection();
         $email_result = $db->prepare('INSERT INTO user(email) VALUES (:email)');
